@@ -18,6 +18,7 @@ class DioClient {
   DioClient.options({required BaseOptions options}) : _dio = Dio(options);
 
   bool _enableCookie = false;
+  int maxRequest = 2;
 
   void addLogInterceptor() {
     if (kDebugMode) {
@@ -55,20 +56,11 @@ class DioClient {
       final cookieManager = CookieManager(_cookieJar);
       _dio.interceptors.add(cookieManager);
       _enableCookie = true;
-      final tmp =
-          await _cookieJar.loadForRequest(Uri.parse('https://metruyencv.com/'));
-      // print(tmp);
-      final response = await _dio.get('https://metruyencv.com/');
-      print(response.statusCode);
       return true;
     } catch (error) {
       debugPrint(error.toString());
       return false;
     }
-  }
-
-  void tmp(String uri) async {
-    print(await _cookieJar.loadForRequest(Uri.parse(uri)));
   }
 
   Future<void> cleanCookie(String uri) async {
@@ -89,6 +81,7 @@ class DioClient {
 
   Future<dynamic> request<T>(
     String uri, {
+    Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
@@ -97,6 +90,7 @@ class DioClient {
     try {
       var response = await _dio.request<T>(
         uri,
+        data: data,
         queryParameters: queryParameters,
         options: options,
         cancelToken: cancelToken,
@@ -272,5 +266,9 @@ class DioClient {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void tmp() {
+    // _dio.delete(path).asStream().do
   }
 }

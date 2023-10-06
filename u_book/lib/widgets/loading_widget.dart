@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:u_book/app/extensions/extensions.dart';
-
 
 class LoadingWidget extends StatefulWidget {
   const LoadingWidget({
@@ -47,14 +47,14 @@ class _LoadingWidgetState extends State<LoadingWidget>
       width: widget.radius * 2 + 15,
       child: Stack(
         children: [
-          Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: const EdgeInsets.all(5),
-              child:
-                  widget.child ?? Image.asset("./assets/icons/smart-home.png"),
-            ),
-          ),
+          // Align(
+          //   alignment: Alignment.center,
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(5),
+          //     child:
+          //         widget.child ?? Image.asset("./assets/icons/smart-home.png"),
+          //   ),
+          // ),
           Positioned.fill(
               child: RotationTransition(
             turns: Tween(begin: 0.0, end: 1.0)
@@ -129,3 +129,27 @@ class _SpinningLinesPainter extends CustomPainter {
   bool shouldRepaint(_SpinningLinesPainter oldDelegate) =>
       oldDelegate._linePaint != _linePaint;
 }
+
+// class LoadingWidget extends StatelessWidget {
+//   const LoadingWidget({super.key, this.loading = true});
+
+//   final bool loading;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final colorScheme = context.colorScheme;
+//     return Center(
+//         child: loading
+//             ? SpinKitFadingCube(
+//                 color: colorScheme.primary,
+//                 size: 50.0,
+//               )
+//             : Padding(
+//                 padding: const EdgeInsets.symmetric(vertical: 12),
+//                 child: SpinKitThreeBounce(
+//                   color: colorScheme.primary,
+//                   size: 25.0,
+//                 ),
+//               ));
+//   }
+// }

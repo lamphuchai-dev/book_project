@@ -22,11 +22,22 @@ class SystemUtils {
     ]);
   }
 
-  static void setSystemNavigationBarColor() {
+  static void setSystemNavigationBarColor(Color color) {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: color,
       ),
     );
+  }
+
+  static void setEnabledSystemUIModeReadBookPage() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top]);
+    setSystemNavigationBarColor(Colors.black12);
+  }
+
+  static void setEnabledSystemUIModeDefault() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
   }
 }

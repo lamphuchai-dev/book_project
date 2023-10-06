@@ -1,10 +1,29 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:u_book/widgets/cache_network_image.dart';
 
 class BlurredBackdropImage extends StatelessWidget {
-  const BlurredBackdropImage({super.key});
+  const BlurredBackdropImage({super.key, required this.url});
+  final String url;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned.fill(
+          child: CacheNetWorkImage(url),
+        ),
+        Positioned.fill(
+          child: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 9, sigmaY: 9.0),
+              child: const SizedBox(),
+            ),
+          ),
+        )
+      ],
+    );
   }
 }

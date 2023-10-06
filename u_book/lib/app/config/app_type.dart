@@ -1,5 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
-enum StatusType { init, loading, success, deleteSuccess, error }
+enum StatusType { init, loading, loaded, deleteSuccess, error }
 
-enum ConditionType { IF, THEN }
+enum MediaStatus { init, start, pause, complete, stop, error }
+
+enum AutoScrollStatus { init, start, pause, complete, stop, error }

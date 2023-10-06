@@ -1,19 +1,11 @@
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio/dio.dart';
-import 'package:dio_client/index.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:u_book/app/bloc/global_cubit/global_cubit.dart';
-import 'package:u_book/app/constants/gaps.dart';
-import 'package:u_book/utils/directory_utils.dart';
+import 'package:u_book/data/models/extension.dart';
+import 'package:u_book/services/main_code.dart';
 import 'package:u_book/utils/logger.dart';
+import 'package:u_book/widgets/widgets.dart';
 import '../cubit/home_cubit.dart';
-import '../widgets/widgets.dart';
-import 'book_scaffold.dart';
-import 'buid_gird.dart';
-import 'list_widget.dart';
+import 'search_book_delegate.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,9 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late HomeCubit _homeCubit;
-  final _dioClient = DioClient();
   final _logger = Logger("_HomePageState");
-  final pi = "http://192.168.1.9:3000/auth/sign-up";
   @override
   void initState() {
     _homeCubit = context.read<HomeCubit>();
@@ -35,8 +25,65 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BookScaffold(
-        appBar: AppBar(centerTitle: true, title: const Text("Home")),
-        body: const BuildGird());
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          title: Text(_homeCubit.nameExt),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  showSearch(
+                      context: context,
+                      delegate: SearchBookDelegate(
+                        onSearchBook: _homeCubit.onSearchBook,
+                      ));
+                },
+                icon: const Icon(Icons.search_rounded))
+          ],
+        ),
+        body: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            return switch (state.extStatus) {
+              ExtensionStatus.loaded => _extReady(state.extension),
+              _ => const LoadingWidget()
+            };
+          },
+        ));
+  }
+
+  Widget _extReady(Extension extension) {
+    final tabItems = extension.tabsHome
+        .map(
+          (e) => Tab(
+            text: e.title,
+          ),
+        )
+        .toList();
+    final tabChildren = extension.tabsHome
+        .map(
+          (tabHome) => KeepAliveWidget(
+            child: BooksGridWidget(
+              onFetchListBook: (page) {
+                return _homeCubit.onGetListBook(tabHome.url, page);
+              },
+            ),
+          ),
+        )
+        .toList();
+    return DefaultTabController(
+      length: extension.tabsHome.length,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TabBar(
+                isScrollable: true,
+                dividerColor: Colors.transparent,
+                tabs: tabItems),
+            Expanded(child: TabBarView(children: tabChildren))
+          ],
+        ),
+      ),
+    );
   }
 }

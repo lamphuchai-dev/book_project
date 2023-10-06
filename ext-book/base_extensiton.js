@@ -78,6 +78,9 @@ class XPathNode {
 
 class Extension {
   settingKeys = [];
+  constructor(host) {
+    this.hostExt = host;
+  }
   async request(url, options) {
     options = options || {};
     options.headers = options.headers || {};
@@ -127,9 +130,13 @@ class Extension {
   detail(url) {
     throw new Error("not implement detail");
   }
+  chapters(url) {
+    throw new Error("not implement chapter");
+  }
   chapter(url) {
     throw new Error("not implement chapter");
   }
+
   checkUpdate(url) {
     throw new Error("not implement checkUpdate");
   }

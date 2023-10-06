@@ -17,7 +17,7 @@ class DirectoryUtils {
   }
 
   static String _appDir(Directory directory) {
-    final dir = path.join(directory.path, 'h_book');
+    final dir = path.join(directory.path, 'u_book');
     Directory(dir).createSync(recursive: true);
     return dir;
   }

@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:u_book/app/extensions/context_extension.dart';
 import 'package:u_book/app/routes/routes.dart';
 
 import 'app/bloc/global_cubit/global_cubit.dart';
@@ -18,7 +20,17 @@ class App extends StatelessWidget {
       create: (context) =>
           GlobalCubit(sharedPreferenceHelper: getIt<SharedPreferenceHelper>())
             ..onInit(),
-      child: BlocBuilder<GlobalCubit, GlobalState>(
+      child: BlocConsumer<GlobalCubit, GlobalState>(
+        listenWhen: (previous, current) =>
+            previous.themeMode != current.themeMode,
+        listener: (context, state) {
+          final backgroundColor = context.colorScheme.background;
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle(
+              systemNavigationBarColor: backgroundColor,
+            ),
+          );
+        },
         buildWhen: (previous, current) {
           if (previous.themeMode != current.themeMode) {
             return true;

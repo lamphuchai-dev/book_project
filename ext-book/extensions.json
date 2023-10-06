@@ -1,0 +1,55 @@
+[
+  {
+    "name": "Say Truyện",
+    "author": "uBook",
+    "version": 1,
+    "source": "https://saytruyenmoi.com",
+    "regexp": "",
+    "description": "Đọc truyện trên trang Say Truyện",
+    "locale": "vi_VN",
+    "language": "javascript",
+    "type": "comic",
+    "script": "https://raw.githubusercontent.com/lamphuchai-dev/book_project/main/ext-book/say_truyen.js",
+    "tabsHome": [
+      { "title": "Truyện mới cập nhật", "url": "/" },
+      { "title": "Manhwa", "url": "/genre/manhwa" },
+      { "title": "Manga", "url": "/genre/manga" },
+      { "title": "Romance", "url": "/genre/romance" }
+    ],
+    "enableSearch": true,
+    "enableGenre": true
+  },
+  {
+    "name": "Net Truyện",
+    "author": "uBook",
+    "version": 1,
+    "source": "https://www.nettruyenus.com",
+    "regexp": "",
+    "description": "Đọc truyện trên trang Net Truyện",
+    "locale": "vi_VN",
+    "language": "javascript",
+    "type": "comic",
+    "script": "https://raw.githubusercontent.com/lamphuchai-dev/book_project/main/ext-book/net_truyen.js",
+    "tabsHome": [
+      {
+        "title": "Mới cập nhật",
+        "url": "/tim-truyen"
+      },
+      {
+        "title": "Truyện mới",
+        "url": "/tim-truyen?status=-1&sort=15"
+      },
+      {
+        "title": "Top all",
+        "url": "/tim-truyen?status=-1&sort=10"
+      },
+      { "title": "Top tháng", "url": "/tim-truyen?status=-1&sort=11" },
+      { "title": "Top tuần", "url": "/tim-truyen?status=-1&sort=12" },
+      { "title": "Top ngày", "url": "/tim-truyen?status=-1&sort=13" },
+      { "title": "Theo dõi", "url": "/tim-truyen?status=-1&sort=20" },
+      { "title": "Bình luận", "url": "/tim-truyen?status=-1&sort=25" }
+    ],
+    "enableSearch": true,
+    "enableGenre": true
+  }
+]

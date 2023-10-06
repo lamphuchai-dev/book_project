@@ -101,9 +101,9 @@ class ItemBook extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        const Text(
-          "Chương 2",
-          style: TextStyle(fontSize: 11, height: 0.8),
+        Text(
+          book.description,
+          style: const TextStyle(fontSize: 11, height: 0.8),
           textAlign: TextAlign.center,
           maxLines: 1,
         ),

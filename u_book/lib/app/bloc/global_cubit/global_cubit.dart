@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:u_book/app/constants/colors.dart';
 import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/data/sharedpref/shared_preference_helper.dart';
 
@@ -21,8 +23,20 @@ class GlobalCubit extends Cubit<GlobalState> {
           .firstWhereOrNull((item) => item.name == nameThemeLocal);
       if (themeMode != null && state.themeMode != themeMode) {
         emit(state.copyWith(themeMode: themeMode));
+
+        SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(
+            systemNavigationBarColor: AppColors.dark.background,
+          ),
+        );
       }
     }
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColors.dark.background,
+      ),
+    );
   }
 
   // user change theme app

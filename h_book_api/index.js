@@ -1,27 +1,48 @@
-// Import other required libraries
-const textToSpeech = require("@google-cloud/text-to-speech");
-const fs = require("fs");
-const util = require("util");
-// Creates a client
-const client = new textToSpeech.TextToSpeechClient();
-async function quickStart() {
-  // The text to synthesize
-  const text = "hello, world!";
+const puppeteer = require("puppeteer");
+const Ext = require("./src/ext");
 
-  // Construct the request
-  const request = {
-    input: { text: text },
-    // Select the language and SSML voice gender (optional)
-    voice: { languageCode: "en-US", ssmlGender: "NEUTRAL" },
-    // select the type of audio encoding
-    audioConfig: { audioEncoding: "MP3" },
-  };
+class BaseExt extends Ext {}
+(async () => {
+  // Khởi tạo trình duyệt
+  // const browser = await puppeteer.launch({ headless: false });
 
-  // Performs the text-to-speech request
-  const [response] = await client.synthesizeSpeech(request);
-  // Write the binary audio content to a local file
-  const writeFile = util.promisify(fs.writeFile);
-  await writeFile("output.mp3", response.audioContent, "binary");
-  console.log("Audio content written to file: output.mp3");
-}
-quickStart();
+  // const page = await browser.newPage();
+  // page.setUserAgent(
+  //   "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
+  // );
+  // await page.setRequestInterception(true);
+  // page.on("request", (request) => {
+  //   const { host, searchParams } = new URL(request.url());
+
+  //   if (request.method() == "GET" && host == "api.truyen.onl") {
+  //     console.log(`Yêu cầu: ${request.method()} ${request.url()}`);
+  //   }
+  //   request.continue();
+  // });
+
+  // // Điều hướng đến một URL cụ thể
+  // await page.goto("https://metruyencv.com/bang-xep-hang/thang/thinh-hanh");
+
+  // await page.setCookie({
+  //   name: "l_token",
+  //   value:
+  //     "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hcGkudHJ1eWVuLm9ubFwvdjJcL2F1dGhcL3JlZnJlc2giLCJpYXQiOjE2OTU0NzczOTcsImV4cCI6MTY5NjQzNTEwNCwibmJmIjoxNjk2MDAzMTA0LCJqdGkiOiJNdkJUWXdvM1NKdmg1aXpNIiwic3ViIjoxMzA0ODQ1fQ.raVZtz0Wqn9_Q5pLWnULVmQ-rYH6Snwbuq63WuvKKkY",
+  // });
+
+  // // Chụp ảnh màn hình trang web và lưu thành tệp
+  // await page.screenshot({ path: "example.png" });
+
+  // console.log(await page.cookies());
+
+  // const tmp = page.queryObjects
+
+  // Đóng trình duyệt
+  // await browser.close();
+
+  var tmp = new BaseExt();
+  console.log(tmp.host);
+
+  var doc = document.querySelector(".comic-item li a");
+  console.log(doc);
+})();
+

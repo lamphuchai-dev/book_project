@@ -78,6 +78,10 @@ class XPathNode {
 
 class Extension {
   settingKeys = [];
+  host;
+  constructor(host) {
+    this.host = host;
+  }
   async request(url, options) {
     options = options || {};
     options.headers = options.headers || {};
@@ -143,7 +147,6 @@ class Extension {
   }
   async load() {}
 }
-
 
 console.log = function (message) {
   if (typeof message === "object") {
