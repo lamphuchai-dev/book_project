@@ -43,7 +43,7 @@ class AutoScrollMenuWidget extends StatelessWidget {
                   builder: (context, state) {
                     if (state is AutoScrollReadBook) {
                       return Slider(
-                        min: 5,
+                        min: 2,
                         max: 40,
                         onChanged:
                             context.read<ReadBookCubit>().onChangeTimerScroll,

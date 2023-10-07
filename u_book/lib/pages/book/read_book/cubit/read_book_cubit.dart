@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/data/models/book.dart';
 import 'package:u_book/data/models/chapter.dart';
-import 'package:u_book/services/extension_service.dart';
+import 'package:u_book/services/extension_run_time.dart';
 import 'package:u_book/utils/logger.dart';
 import 'package:u_book/utils/system_utils.dart';
 
@@ -14,8 +14,8 @@ class ReadBookCubit extends Cubit<ReadBookState> {
   ReadBookCubit(
       {required this.book,
       required Chapter chapter,
-      required ExtensionService extensionService})
-      : _extensionService = extensionService,
+      required ExtensionRunTime extensionRunTime})
+      : _extensionRunTime = extensionRunTime,
         _intReadChapter = chapter,
         super(BaseReadBook(chapters: book.chapters));
   final _logger = Logger("ReadBookCubit");
@@ -24,7 +24,7 @@ class ReadBookCubit extends Cubit<ReadBookState> {
 
   final Chapter _intReadChapter;
 
-  final ExtensionService _extensionService;
+  final ExtensionRunTime _extensionRunTime;
 
   bool _currentOnTouchScreen = false;
 

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/pages/home/view/home_view.dart';
-import 'package:u_book/utils/system_utils.dart';
 import '../cubit/bottom_navigation_bar_cubit.dart';
-import '../widgets/widgets.dart';
 
 class BottomNavigationBarPage extends StatefulWidget {
   const BottomNavigationBarPage({super.key});

@@ -110,7 +110,7 @@ class Extension extends Equatable {
       tabsHome: map['tabsHome'] != null
           ? List<TabsHome>.from(
               (map['tabsHome']).map<TabsHome>(
-                (x) => TabsHome.fromMap(x),
+                (x) => TabsHome.fromMap((x as Map).cast<String, dynamic>()),
               ),
             )
           : [],

@@ -6,6 +6,8 @@ import 'package:u_book/pages/bottom_navigation_bar/bottom_navigation_bar.dart';
 import 'package:u_book/pages/book/detail_book/detail_book.dart';
 import 'package:u_book/pages/book/chapters/chapters.dart';
 import 'package:u_book/pages/book/read_book/read_book.dart';
+import 'package:u_book/pages/bottom_navigation_bar/bottom_navigation_bar.dart';
+import 'package:u_book/pages/splash/splash.dart';
 
 class Routes {
   static const initialRoute = "/";
@@ -13,6 +15,12 @@ class Routes {
     final args = settings.arguments;
     switch (settings.name) {
       case initialRoute:
+        return PageTransition(
+            settings: settings,
+            child: const SplashView(),
+            type: PageTransitionType.rightToLeft);
+
+      case RoutesName.bottomNav:
         return PageTransition(
             settings: settings,
             child: const BottomNavigationBarView(),

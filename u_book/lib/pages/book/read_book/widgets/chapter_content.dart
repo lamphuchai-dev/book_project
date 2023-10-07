@@ -7,10 +7,10 @@ import 'package:u_book/data/models/book.dart';
 import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/data/models/chapter_content.dart';
 import 'package:u_book/di/components/service_locator.dart';
-import 'package:u_book/services/extension_service.dart';
+import 'package:u_book/services/extension_run_time.dart';
+import 'package:u_book/services/extensions_manager.dart';
 import 'package:u_book/widgets/cache_network_image.dart';
 import 'package:u_book/widgets/widgets.dart';
-import 'package:vector_math/vector_math_64.dart' as math;
 
 import '../cubit/read_book_cubit.dart';
 // import 'package:zoom_widget/zoom_widget.dart';
@@ -29,8 +29,6 @@ class _ChapterContentState extends State<ChapterContent>
     with AutomaticKeepAliveClientMixin {
   bool _loadContent = false;
 
-  late ExtensionService _extensionService;
-
   List<ComicContent> list = [];
   late ScrollController _scrollController;
   late ValueNotifier<ContentPagination?> _contentPaginationValue;
@@ -38,10 +36,11 @@ class _ChapterContentState extends State<ChapterContent>
   late ReadBookCubit _readBookCubit;
 
   bool _autoScroll = false;
+  late ExtensionRunTime _extensionRunTime;
 
   @override
   void initState() {
-    _extensionService = getIt<ExtensionService>();
+    _extensionRunTime = getIt<ExtensionsManager>().runTimePrimary!;
 
     if (mounted) {
       _onGet();
@@ -79,7 +78,7 @@ class _ChapterContentState extends State<ChapterContent>
     setState(() {
       _loadContent = true;
     });
-    final content = await _extensionService.chapter(widget.chapter.url);
+    final content = await _extensionRunTime.chapter(widget.chapter.url);
     if (content is List) {
       list = content.map((e) => ComicContent.fromMap(e)).toList();
     }
@@ -95,9 +94,6 @@ class _ChapterContentState extends State<ChapterContent>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // if (_loadContent) {
-    //   return const LoadingWidget();
-    // }
 
     final textTheme = context.appTextTheme;
     final width = context.width;

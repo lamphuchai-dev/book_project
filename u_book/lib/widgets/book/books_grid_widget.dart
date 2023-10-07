@@ -29,7 +29,7 @@ class BooksGridWidget extends StatefulWidget {
   State<BooksGridWidget> createState() => _BooksGridWidgetState();
 }
 
-class _BooksGridWidgetState extends State<BooksGridWidget>{
+class _BooksGridWidgetState extends State<BooksGridWidget> {
   int _page = 0;
   List<Book> _listBook = [];
   bool _isLoading = false;
@@ -53,9 +53,10 @@ class _BooksGridWidgetState extends State<BooksGridWidget>{
     if (!widget.useFetch) {
       _listBook = widget.initialBooks ?? [];
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _onLoading();
-      });
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   _onLoading();
+      // });
+      _onLoading();
     }
     super.initState();
   }
@@ -76,12 +77,18 @@ class _BooksGridWidgetState extends State<BooksGridWidget>{
     setState(() {
       _isLoadMore = true;
     });
-    _page++;
-    final list = await widget.onFetchListBook.call(_page);
-    if (list.isNotEmpty) {
-      _listBook.addAll(list);
-      widget.onChangeBooks?.call(_listBook);
-    }
+    try {
+      _page++;
+      final list = await widget.onFetchListBook.call(_page);
+      if (list.isNotEmpty) {
+        setState(() {
+          _listBook.addAll(list);
+          // _listBook = _listBook
+
+        });
+        widget.onChangeBooks?.call(_listBook);
+      }
+    } catch (error) {}
     setState(() {
       _isLoadMore = false;
     });
@@ -111,7 +118,9 @@ class _BooksGridWidgetState extends State<BooksGridWidget>{
       return const LoadingWidget();
     }
 
-    if (_listBook.isEmpty) return widget.emptyWidget ?? Text("data");
+    if (_listBook.isEmpty) {
+      return widget.emptyWidget ?? const Text("data");
+    }
 
     final girdConfig = _get(3);
     return Padding(
@@ -125,24 +134,26 @@ class _BooksGridWidgetState extends State<BooksGridWidget>{
             const SliverToBoxAdapter(
               child: SizedBox(height: 8),
             ),
-            SliverGrid.builder(
-              itemCount: _listBook.length,
+            SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: girdConfig.crossAxisCount,
                   crossAxisSpacing: 8,
                   mainAxisExtent: girdConfig.heightItem,
                   mainAxisSpacing: 8),
-              itemBuilder: (context, index) {
-                final book = _listBook[index];
-                return ItemBook(
-                  book: book,
-                  onTap: () {
-                    Navigator.pushNamed(context, RoutesName.detailBook,
-                        arguments: book);
-                  },
-                  onLongTap: () {},
-                );
-              },
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  final book = _listBook[index];
+                  return ItemBook(
+                    book: book,
+                    onTap: () {
+                      Navigator.pushNamed(context, RoutesName.detailBook,
+                          arguments: book);
+                    },
+                    onLongTap: () {},
+                  );
+                },
+                childCount: _listBook.length,
+              ),
             ),
             SliverToBoxAdapter(
               child: _isLoadMore

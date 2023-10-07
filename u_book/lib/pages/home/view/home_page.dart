@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:u_book/app/constants/gaps.dart';
 import 'package:u_book/data/models/extension.dart';
-import 'package:u_book/services/main_code.dart';
-import 'package:u_book/utils/logger.dart';
+import 'package:u_book/di/components/service_locator.dart';
+import 'package:u_book/pages/home/widgets/widgets.dart';
+import 'package:u_book/services/extensions_manager.dart';
 import 'package:u_book/widgets/widgets.dart';
 import '../cubit/home_cubit.dart';
-import 'search_book_delegate.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,7 +17,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late HomeCubit _homeCubit;
-  final _logger = Logger("_HomePageState");
   @override
   void initState() {
     _homeCubit = context.read<HomeCubit>();
@@ -28,7 +28,34 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text(_homeCubit.nameExt),
+          title: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => SelectExtensionBottomSheet(
+                      extensions: getIt<ExtensionsManager>().extensions,
+                      onSelected: (ext) {
+                        _homeCubit.onChangeExtensions(ext);
+                      },
+                    ),
+                  );
+                },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(child: Text(state.extension.name)),
+                    Gaps.wGap8,
+                    const Icon(
+                      Icons.expand_more_rounded,
+                      size: 26,
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
           actions: [
             IconButton(
                 onPressed: () {

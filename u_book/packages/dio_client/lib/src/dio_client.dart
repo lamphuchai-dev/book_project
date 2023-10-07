@@ -6,6 +6,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
 
 import 'dio_client_exception.dart';
+import 'dio_concurrent.dart';
 
 class DioClient {
   final Dio _dio;
@@ -18,7 +19,8 @@ class DioClient {
   DioClient.options({required BaseOptions options}) : _dio = Dio(options);
 
   bool _enableCookie = false;
-  int maxRequest = 2;
+
+  DioClientConcurrent? _dioClientConcurrent;
 
   void addLogInterceptor() {
     if (kDebugMode) {
@@ -268,7 +270,19 @@ class DioClient {
     }
   }
 
-  void tmp() {
-    // _dio.delete(path).asStream().do
+  Future<dynamic> getWithConcurrent(
+    String uri, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) {
+    _dioClientConcurrent ??=
+        DioClientConcurrent(dioClient: this, maxConcurrent: 10);
+    return _dioClientConcurrent!.get(uri,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress);
   }
 }

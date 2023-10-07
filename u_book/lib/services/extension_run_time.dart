@@ -7,7 +7,6 @@ import 'package:dio_client/index.dart';
 import 'package:flutter_js/flutter_js.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/utils/directory_utils.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 
@@ -17,11 +16,11 @@ import 'package:u_book/utils/logger.dart';
 
 import 'main_code.dart';
 
-class ExtensionService {
+class ExtensionRunTime {
   late Extension extension;
   late JavascriptRuntime runtime;
 
-  final _logger = Logger("ExtensionRuntime");
+  final _logger = Logger("ExtensionRunTime");
   final _dioClient = DioClient();
 
   Future<bool> initRuntime(Extension ext) async {
@@ -147,9 +146,9 @@ class ExtensionService {
 
     runtime.evaluate(mainCode);
 
-    // final extScript = await getExtByUrl(extension.script);
+    final extScript = await getExtByUrl(extension.script);
     // const extScript = netTruyen;
-    const extScript = sayTruyen;
+    // const extScript = sayTruyen;
     final ext = extScript.replaceAll(
         RegExp(r'export default class.*'), 'class Ext extends Extension {');
     JsEvalResult jsResult = await runtime.evaluateAsync('''
@@ -166,7 +165,7 @@ class ExtensionService {
   Future<String> getExtByUrl(String url) async {
     final res = await _dioClient.get(url);
 
-    return res.data;
+    return res;
   }
 
   Future<T> _runExtension<T>(Future<T> Function() fun) async {

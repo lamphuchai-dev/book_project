@@ -1,5 +1,5 @@
 export 'flavor_banner.dart';
-export 'base_ui/base_bottom_sheet.dart';
+export 'base_bottom_sheet_ui.dart';
 export 'loading_widget.dart';
 export 'slide_transition_animation.dart';
 export 'empty_list_data_widget.dart';

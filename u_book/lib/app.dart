@@ -16,10 +16,14 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          GlobalCubit(sharedPreferenceHelper: getIt<SharedPreferenceHelper>())
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => GlobalCubit(
+              sharedPreferenceHelper: getIt<SharedPreferenceHelper>())
             ..onInit(),
+        ),
+      ],
       child: BlocConsumer<GlobalCubit, GlobalState>(
         listenWhen: (previous, current) =>
             previous.themeMode != current.themeMode,
