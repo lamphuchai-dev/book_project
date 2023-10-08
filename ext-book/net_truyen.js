@@ -96,18 +96,20 @@ export default class extends Extension {
     let result = [];
     for (const element of listEl) {
       var image = await this.getAttributeText(element.content, "img", "src");
-      var otherUrl = await this.getAttributeText(
-        element.content,
-        "img",
-        "data-original"
-      );
+      if (image == null) {
+        image = await this.getAttributeText(
+          element.content,
+          "img",
+          "data-original"
+        );
+      }
       if (image && image.startsWith("//")) {
         image = "https:" + image;
       }
-      if (otherUrl && otherUrl.startsWith("//")) {
-        otherUrl = "https:" + otherUrl;
-      }
-      result.push({ url: image, otherUrl });
+      // if (otherUrl && otherUrl.startsWith("//")) {
+      //   otherUrl = "https:" + otherUrl;
+      // }
+      result.push(image);
     }
     return result;
   }

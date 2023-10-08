@@ -94,7 +94,11 @@ class HomeCubit extends Cubit<HomeState> {
 
   void onChangeExtensions(Extension extension) async {
     emit(state.copyWith(extension: extension, extStatus: ExtensionStatus.init));
-    _runTime = await _extensionsManager.setRunTimePrimary(extension);
+    final newRunTime = await _extensionsManager.setRunTimePrimary(extension);
+    if (newRunTime == null) {
+      emit(state.copyWith(extStatus: ExtensionStatus.error));
+    }
+    _runTime = newRunTime!;
     emit(state.copyWith(extStatus: ExtensionStatus.loaded));
   }
 }

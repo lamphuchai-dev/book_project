@@ -140,20 +140,12 @@ class ExtensionRunTime {
   }
 
   Future<bool> _installExtension() async {
-    // final baseExt = await getExtByUrl(
-    //     "https://raw.githubusercontent.com/lamphuchai-dev/ext-book/main/base/base_ext.js");
-    // runtime.evaluate(baseExt);
-
     runtime.evaluate(mainCode);
-
-    final extScript = await getExtByUrl(extension.script);
-    // const extScript = netTruyen;
-    // const extScript = sayTruyen;
-    final ext = extScript.replaceAll(
+    final ext = extension.jsScript!.replaceAll(
         RegExp(r'export default class.*'), 'class Ext extends Extension {');
     JsEvalResult jsResult = await runtime.evaluateAsync('''
     $ext
-    var extension = new Ext("${extension.source}");
+    var extension = new Ext("${extension.source}","${extension.name}");
         extension.load().then(()=>{
         return true;
       });

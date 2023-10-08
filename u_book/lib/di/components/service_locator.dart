@@ -1,6 +1,7 @@
 import 'package:dio_client/index.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:u_book/services/database_service.dart';
 import 'package:u_book/services/storage_service.dart';
 
 import '../../data/secure_storage/secure_storage.dart';
@@ -19,8 +20,13 @@ Future<void> setupLocator() async {
   getIt.registerSingleton(storage);
 
   getIt.registerSingleton(DioClient());
-  final extManger =
-      ExtensionsManager(dioClient: getIt<DioClient>(), storageService: storage);
+  final databaseService = DatabaseService();
+  databaseService.ensureInitialized();
+  getIt.registerSingleton(databaseService);
+  final extManger = ExtensionsManager(
+      dioClient: getIt<DioClient>(),
+      storageService: storage,
+      databaseService: databaseService);
   getIt.registerSingleton(extManger);
 
   // singletons:----------------------------------------------------------------

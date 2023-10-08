@@ -133,14 +133,15 @@ BookModel _bookModelDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = BookModel();
-  object.author = reader.readStringOrNull(offsets[0]);
-  object.bookUrl = reader.readStringOrNull(offsets[1]);
-  object.cover = reader.readStringOrNull(offsets[2]);
-  object.description = reader.readStringOrNull(offsets[3]);
-  object.host = reader.readStringOrNull(offsets[4]);
-  object.name = reader.readStringOrNull(offsets[5]);
-  object.totalChapter = reader.readLongOrNull(offsets[6]);
+  final object = BookModel(
+    author: reader.readStringOrNull(offsets[0]),
+    bookUrl: reader.readStringOrNull(offsets[1]),
+    cover: reader.readStringOrNull(offsets[2]),
+    description: reader.readStringOrNull(offsets[3]),
+    host: reader.readStringOrNull(offsets[4]),
+    name: reader.readStringOrNull(offsets[5]),
+    totalChapter: reader.readLongOrNull(offsets[6]),
+  );
   return object;
 }
 

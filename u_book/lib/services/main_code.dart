@@ -79,8 +79,10 @@ class XPathNode {
 
 class Extension {
   settingKeys = [];
-  constructor(host) {
+  constructor(host,extensionName) {
     this.hostExt = host;
+    this.extensionName = extensionName;
+
   }
   async request(url, options) {
     options = options || {};

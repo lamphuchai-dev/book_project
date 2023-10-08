@@ -36,29 +36,29 @@ class StorageService {
     return settings.get(key);
   }
 
-  void setExtension(Extension extension) async {
-    await settings.put(SettingKey.extension, extension.toMap());
-  }
+  // void setExtension(Extension extension) async {
+  //   await settings.put(SettingKey.extension, extension.toMap());
+  // }
 
-  Future<Extension?> getExtension() async {
-    final ext = await settings.get(SettingKey.extension);
-    if (ext == null) return null;
-    return Extension.fromMap(ext.cast<String, dynamic>());
-  }
+  // Future<Extension?> getExtension() async {
+  //   final ext = await settings.get(SettingKey.extension);
+  //   if (ext == null) return null;
+  //   return Extension.fromMap(ext.cast<String, dynamic>());
+  // }
 
-  void setListExtension(List<Extension> extensions) async {
-    final list = extensions.map((e) => e.toMap()).toList();
-    await settings.put(SettingKey.listExtension, list);
-  }
+  // void setListExtension(List<Extension> extensions) async {
+  //   final list = extensions.map((e) => e.toMap()).toList();
+  //   await settings.put(SettingKey.listExtension, list);
+  // }
 
-  Future<List<Extension>> getListExtension() async {
-    final exts = await settings.get(SettingKey.listExtension);
-    if (exts == null) return [];
-    return (exts as List)
-        .map<Extension>(
-            (ext) => Extension.fromMap((ext as Map).cast<String, dynamic>()))
-        .toList();
-  }
+  // Future<List<Extension>> getListExtension() async {
+  //   final exts = await settings.get(SettingKey.listExtension);
+  //   if (exts == null) return [];
+  //   return (exts as List)
+  //       .map<Extension>(
+  //           (ext) => Extension.fromMap((ext as Map).cast<String, dynamic>()))
+  //       .toList();
+  // }
 }
 
 class SettingKey {

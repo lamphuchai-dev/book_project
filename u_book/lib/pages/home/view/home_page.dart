@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
           (tabHome) => KeepAliveWidget(
             child: BooksGridWidget(
               onFetchListBook: (page) {
-                return _homeCubit.onGetListBook(tabHome.url, page);
+                return _homeCubit.onGetListBook(tabHome.url!, page);
               },
             ),
           ),

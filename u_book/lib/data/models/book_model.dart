@@ -10,6 +10,7 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:isar/isar.dart';
+
 import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/data/models/extension.dart';
 
@@ -25,4 +26,18 @@ class BookModel {
   String? cover;
   String? host;
   int? totalChapter;
+  BookModel({
+    this.name,
+    this.bookUrl,
+    this.author,
+    this.description,
+    this.cover,
+    this.host,
+    this.totalChapter,
+  });
+
+  @override
+  String toString() {
+    return 'BookModel(name: $name, bookUrl: $bookUrl, author: $author, description: $description, cover: $cover, host: $host, totalChapter: $totalChapter)';
+  }
 }
