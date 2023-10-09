@@ -54,8 +54,6 @@ export default class extends Extension {
       detailEl.content,
       "div.detail-content p"
     ).text;
-
-    const chapters = await this.chapters(url, res);
     return {
       name,
       cover,
@@ -63,14 +61,12 @@ export default class extends Extension {
       author,
       description,
       host: this.hostExt,
-      chapters,
-      totalChapter: chapters.length,
     };
   }
 
   async chapters(bookUrl, html) {
     if (html == null) {
-      html = await this.request(url);
+      html = await this.request(bookUrl);
     }
 
     const listEl = await this.querySelectorAll(html, "div.list-chapter ul a");
