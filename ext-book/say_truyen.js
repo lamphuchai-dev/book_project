@@ -87,7 +87,11 @@ export default class extends Extension {
     );
     let result = [];
     for (const element of listEl) {
-      var image = await this.getAttributeText(element.content, "img", "src");
+      var image = await this.getAttributeText(
+        element.content,
+        "img",
+        "src"
+      ).replace("\n", "");
       result.push(image);
     }
     return result;
