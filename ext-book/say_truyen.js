@@ -125,3 +125,12 @@ export default class extends Extension {
     return result;
   }
 }
+
+async function detail(url) {
+  const tmp = await fio();
+  return tmp;
+}
+
+const tmp = await detail();
+
+call(() => detail("fe"));

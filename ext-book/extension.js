@@ -77,11 +77,7 @@ class XPathNode {
 }
 
 class Extension {
-  settingKeys = [];
-  constructor(host) {
-    this.hostExt = host;
-  }
-  async request(url, options) {
+  static async request(url, options) {
     options = options || {};
     options.headers = options.headers || {};
     options.method = options.method || "get";
@@ -92,13 +88,13 @@ class Extension {
       return res;
     }
   }
-  querySelector(content, selector) {
+  static querySelector(content, selector) {
     return new Element(content, selector);
   }
-  queryXPath(content, selector) {
+  static queryXPath(content, selector) {
     return new XPathNode(content, selector);
   }
-  async querySelectorAll(content, selector) {
+  static async querySelectorAll(content, selector) {
     let elements = [];
     JSON.parse(
       await sendMessage("querySelectorAll", JSON.stringify([content, selector]))
@@ -107,48 +103,12 @@ class Extension {
     });
     return elements;
   }
-  async getAttributeText(content, selector, attr) {
+  static async getAttributeText(content, selector, attr) {
     return await sendMessage(
       "getAttributeText",
       JSON.stringify([content, selector, attr])
     );
   }
-  async home() {
-    throw new Error("not implement home");
-  }
-
-  async itemHome() {
-    throw new Error("not implement home");
-  }
-
-  search(kw, page, filter) {
-    throw new Error("not implement search");
-  }
-  createFilter(filter) {
-    throw new Error("not implement createFilter");
-  }
-  detail(url) {
-    throw new Error("not implement detail");
-  }
-  chapters(url) {
-    throw new Error("not implement chapter");
-  }
-  chapter(url) {
-    throw new Error("not implement chapter");
-  }
-
-  checkUpdate(url) {
-    throw new Error("not implement checkUpdate");
-  }
-  static async getSetting(key) {
-    return sendMessage("getSetting", JSON.stringify([key]));
-  }
-  async registerSetting(settings) {
-    console.log(JSON.stringify([settings]));
-    this.settingKeys.push(settings.key);
-    return sendMessage("registerSetting", JSON.stringify([settings]));
-  }
-  async load() {}
 }
 
 console.log = function (message) {
@@ -163,3 +123,41 @@ async function stringify(callback) {
   return typeof data === "object" ? JSON.stringify(data) : data;
 }
 
+// async function detail(url) {
+//   const response = await Extension.request("");
+// }
+
+async function itemHome(url, page) {
+  const res = await Extension.request(url, {
+    queryParameters: {
+      page: page ?? 0,
+    },
+  });
+  const list = await Extension.querySelectorAll(res, "div.page-item-detail");
+  const result = [];
+  for (const item of list) {
+    const html = item.content;
+    var cover = await Extension.getAttributeText(html, "img", "data-src");
+
+    if (cover == null) {
+      cover = await Extension.getAttributeText(html, "img", "src");
+    }
+    if (cover && cover.startsWith("//")) {
+      cover = "https:" + cover;
+    }
+    result.push({
+      name: await Extension.querySelector(html, "div.post-title a").text,
+      bookUrl: await Extension.getAttributeText(
+        html,
+        "div.post-title a",
+        "href"
+      ),
+      description: await await Extension.querySelector(
+        html,
+        "div.chapter-item a"
+      ).text,
+      cover,
+    });
+  }
+  return result;
+}

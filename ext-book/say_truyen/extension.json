@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "name": "Say Truyện",
+    "author": "uBook",
+    "version": 1,
+    "source": "https://saytruyenmoi.com",
+    "regexp": "",
+    "description": "Đọc truyện trên trang Say Truyện",
+    "locale": "vi_VN",
+    "language": "javascript",
+    "type": "comic",
+    "path": "https://raw.githubusercontent.com/lamphuchai-dev/book_project/main/ext-book/say_truyen.js",
+    "tabsHome": [
+      { "title": "Truyện mới cập nhật", "url": "/" },
+      { "title": "Manhwa", "url": "/genre/manhwa" },
+      { "title": "Manga", "url": "/genre/manga" },
+      { "title": "Romance", "url": "/genre/romance" }
+    ],
+    "enableSearch": true,
+    "enableGenre": true
+  },
+  "script": {
+    "home": "/src/home.js",
+    "detail": "/src/detail.js",
+    "chapters": "/src/chapters.js",
+    "chapter": "/src/chapter.js",
+    "search": "/src/search.js"
+  }
+}
