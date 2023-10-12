@@ -9,6 +9,7 @@ async function chapter(url) {
     var image = await Extension.getAttributeText(element.content, "img", "src");
     if (image != null) {
       image = image.replace(/\n/g, "");
+      image = image.replace(" ", "");
     }
     result.push(image);
   }
