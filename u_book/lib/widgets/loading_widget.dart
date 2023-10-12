@@ -47,14 +47,12 @@ class _LoadingWidgetState extends State<LoadingWidget>
       width: widget.radius * 2 + 15,
       child: Stack(
         children: [
-          // Align(
-          //   alignment: Alignment.center,
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(5),
-          //     child:
-          //         widget.child ?? Image.asset("./assets/icons/smart-home.png"),
-          //   ),
-          // ),
+          Align(
+            alignment: Alignment.center,
+            child: Padding(padding: const EdgeInsets.all(5), child: widget.child
+                //  ?? Image.asset("./assets/icons/smart-home.png"),
+                ),
+          ),
           Positioned.fill(
               child: RotationTransition(
             turns: Tween(begin: 0.0, end: 1.0)

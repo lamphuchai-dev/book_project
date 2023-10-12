@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/app/constants/dimens.dart';
 import 'package:u_book/app/extensions/context_extension.dart';
 import 'package:u_book/app/routes/routes_name.dart';
+import 'package:u_book/data/models/book.dart';
+import 'package:u_book/pages/book/read_book/read_book.dart';
 import 'package:u_book/widgets/widgets.dart';
 import '../cubit/chapters_cubit.dart';
-import '../widgets/widgets.dart';
 
 class ChaptersPage extends StatefulWidget {
   const ChaptersPage({super.key});
@@ -16,9 +18,11 @@ class ChaptersPage extends StatefulWidget {
 
 class _ChaptersPageState extends State<ChaptersPage> {
   late ChaptersCubit _chaptersCubit;
+  late Book _book;
   @override
   void initState() {
     _chaptersCubit = context.read<ChaptersCubit>();
+    _book = _chaptersCubit.book;
     super.initState();
   }
 
@@ -28,7 +32,7 @@ class _ChaptersPageState extends State<ChaptersPage> {
     final colorScheme = context.colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_chaptersCubit.state.book.name),
+        title: Text(_book.name),
         actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
       ),
       body: Padding(
@@ -36,7 +40,10 @@ class _ChaptersPageState extends State<ChaptersPage> {
             const EdgeInsets.symmetric(horizontal: Dimens.horizontalPadding),
         child: BlocBuilder<ChaptersCubit, ChaptersState>(
           builder: (context, state) {
-            final chapters = state.book.chapters;
+            if (state.statusType == StatusType.loading) {
+              return const LoadingWidget();
+            }
+            final chapters = state.chapters;
             return Column(
               children: [
                 Divider(
@@ -75,10 +82,12 @@ class _ChaptersPageState extends State<ChaptersPage> {
                   chapters: chapters,
                   onTapChapter: (chapter) {
                     Navigator.pushNamed(context, RoutesName.readBook,
-                        arguments: {
-                          "book": _chaptersCubit.state.book,
-                          "chapter": chapter
-                        });
+                        arguments: ReadBookArgs(
+                            book: _book,
+                            chapters: chapters,
+                            readChapter: chapter.index,
+                            fromBookmarks: false,
+                            loadChapters: false));
                   },
                 )),
               ],

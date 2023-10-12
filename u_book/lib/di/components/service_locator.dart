@@ -21,12 +21,10 @@ Future<void> setupLocator() async {
 
   getIt.registerSingleton(DioClient());
   final databaseService = DatabaseService();
-  databaseService.ensureInitialized();
+  await databaseService.ensureInitialized();
   getIt.registerSingleton(databaseService);
   final extManger = ExtensionsManager(
-      dioClient: getIt<DioClient>(),
-      storageService: storage,
-      databaseService: databaseService);
+      dioClient: getIt<DioClient>(), databaseService: databaseService);
   getIt.registerSingleton(extManger);
 
   // singletons:----------------------------------------------------------------

@@ -10,15 +10,13 @@ class Chapter extends Equatable {
   final String url;
   final String bookUrl;
   final int index;
-  final List<ComicContent> comicContent;
-  final List<String> novelContent;
+  final List<String> content;
   const Chapter({
     required this.title,
     required this.url,
     required this.bookUrl,
     required this.index,
-    required this.comicContent,
-    required this.novelContent,
+    required this.content,
   });
 
   Chapter copyWith({
@@ -26,16 +24,14 @@ class Chapter extends Equatable {
     String? url,
     String? bookUrl,
     int? index,
-    List<ComicContent>? comicContent,
-    List<String>? novelContent,
+    List<String>? content,
   }) {
     return Chapter(
       title: title ?? this.title,
       url: url ?? this.url,
       bookUrl: bookUrl ?? this.bookUrl,
       index: index ?? this.index,
-      comicContent: comicContent ?? this.comicContent,
-      novelContent: novelContent ?? this.novelContent,
+      content: content ?? this.content,
     );
   }
 
@@ -45,8 +41,7 @@ class Chapter extends Equatable {
       'url': url,
       'bookUrl': bookUrl,
       'index': index,
-      'comicContent': comicContent.map((x) => x.toMap()).toList(),
-      'novelContent': novelContent,
+      'content': content,
     };
   }
 
@@ -56,16 +51,9 @@ class Chapter extends Equatable {
         url: map['url'] ?? "",
         bookUrl: map['bookUrl'] ?? "",
         index: map['index'] ?? 0,
-        comicContent: map['comicContent'] != null
-            ? List<ComicContent>.from(
-                (map['comicContent']).map<ComicContent>(
-                  (x) => ComicContent.fromMap(x),
-                ),
-              )
-            : [],
-        novelContent: map['novelContent'] != null
+        content: map['content'] != null
             ? List<String>.from(
-                (map['novelContent']),
+                (map['content']),
               )
             : []);
   }
@@ -85,8 +73,7 @@ class Chapter extends Equatable {
       url,
       bookUrl,
       index,
-      comicContent,
-      novelContent,
+      content,
     ];
   }
 }

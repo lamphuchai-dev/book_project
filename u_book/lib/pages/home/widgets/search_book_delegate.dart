@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:u_book/app/extensions/context_extension.dart';
+import 'package:u_book/app/routes/routes_name.dart';
 import 'package:u_book/data/models/book.dart';
 
 import '../../../widgets/book/books_grid_widget.dart';
@@ -59,6 +60,9 @@ class SearchBookDelegate extends SearchDelegate {
       emptyWidget: _noSearchResults(),
       onChangeBooks: (value) {
         _listBook = value;
+      },
+      onTap: (book) {
+        Navigator.pushNamed(context, RoutesName.detailBook, arguments: book);
       },
     );
   }

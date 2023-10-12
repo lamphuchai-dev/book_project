@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -7,7 +6,6 @@ import 'package:u_book/app/constants/dimens.dart';
 import 'package:u_book/app/constants/gaps.dart';
 import 'package:u_book/app/extensions/context_extension.dart';
 import 'package:u_book/app/routes/routes_name.dart';
-import 'package:u_book/data/models/page_args.dart';
 import 'package:u_book/widgets/cache_network_image.dart';
 import 'package:u_book/widgets/widgets.dart';
 import '../cubit/detail_book_cubit.dart';
@@ -180,15 +178,31 @@ class _DetailBookPageState extends State<DetailBookPage> {
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      width: 100,
-                      decoration: BoxDecoration(
-                          color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(Dimens.radius)),
-                      alignment: Alignment.center,
-                      child: const Icon(
-                        Icons.file_download,
-                        size: 30,
+                    GestureDetector(
+                      onTap: () {
+                        _detailBookCubit.actionBookmark();
+                      },
+                      child: BlocBuilder<DetailBookCubit, DetailBookState>(
+                        builder: (context, state) {
+                          return Container(
+                            width: 100,
+                            decoration: BoxDecoration(
+                                color: colorScheme.surface,
+                                borderRadius:
+                                    BorderRadius.circular(Dimens.radius)),
+                            alignment: Alignment.center,
+                            child: state.isBookmark
+                                ? Icon(
+                                    Icons.bookmark_added_rounded,
+                                    size: 30,
+                                    color: colorScheme.primary,
+                                  )
+                                : const Icon(
+                                    Icons.bookmark_add_rounded,
+                                    size: 30,
+                                  ),
+                          );
+                        },
                       ),
                     ),
                     Gaps.wGap8,

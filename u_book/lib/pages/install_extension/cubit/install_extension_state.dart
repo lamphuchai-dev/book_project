@@ -1,9 +1,27 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'install_extension_cubit.dart';
 
-abstract class InstallExtensionState extends Equatable {
-  const InstallExtensionState();
-  @override
-  List<Object> get props => [];
-}
+class InstallExtensionState extends Equatable {
+  const InstallExtensionState(
+      {required this.installedExts,
+      required this.notInstalledExts,
+      required this.statusType});
+  final List<Extension> installedExts;
+  final List<Extension> notInstalledExts;
+  final StatusType statusType;
 
-class InstallExtensionInitial extends InstallExtensionState {}
+  @override
+  List<Object> get props => [installedExts, notInstalledExts, statusType];
+
+  InstallExtensionState copyWith({
+    List<Extension>? installedExts,
+    List<Extension>? notInstalledExts,
+    StatusType? statusType,
+  }) {
+    return InstallExtensionState(
+      installedExts: installedExts ?? this.installedExts,
+      notInstalledExts: notInstalledExts ?? this.notInstalledExts,
+      statusType: statusType ?? this.statusType,
+    );
+  }
+}

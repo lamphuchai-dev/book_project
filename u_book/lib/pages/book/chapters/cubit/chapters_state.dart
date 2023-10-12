@@ -2,16 +2,19 @@
 part of 'chapters_cubit.dart';
 
 class ChaptersState extends Equatable {
-  const ChaptersState({required this.book});
-  final Book book;
+  const ChaptersState({required this.chapters, required this.statusType});
+  final List<Chapter> chapters;
+  final StatusType statusType;
   @override
-  List<Object> get props => [book];
+  List<Object> get props => [chapters, statusType];
 
   ChaptersState copyWith({
-    Book? book,
+    List<Chapter>? chapters,
+    StatusType? statusType,
   }) {
     return ChaptersState(
-      book: book ?? this.book,
+      chapters: chapters ?? this.chapters,
+      statusType: statusType ?? this.statusType,
     );
   }
 }

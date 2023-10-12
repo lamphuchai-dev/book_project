@@ -42,31 +42,63 @@ class _BookDrawerState extends State<BookDrawer> {
       width: context.width * 0.85,
       // backgroundColor: backgroundColor,
       shape: const RoundedRectangleBorder(),
-      child: SafeArea(
-          child: Column(children: [
+      child: Column(children: [
         _headerDrawer(),
         Expanded(
           child: ListChaptersWidget(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             indexSelect: _readBookCubit.indexPageChapter,
-            chapters: _book.chapters,
+            chapters: _readBookCubit.chapters,
             onTapChapter: (chapter) {
               _readBookCubit.onToPageByChapter(chapter);
               Scaffold.of(context).openEndDrawer();
             },
           ),
         ),
-      ])),
+      ]),
     );
   }
 
   Widget _headerDrawer() {
-    return Container(
-      height: 100,
+    return SizedBox(
+      height: context.height * 0.22,
       // color: Colors.red,
-      child: CacheNetWorkImage(
-        _book.bookUrl,
-        key: ValueKey(_book.name),
+      // child: CacheNetWorkImage(
+      //   _book.cover,
+      //   key: ValueKey(_book.name),
+      // ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned.fill(
+              child: BlurredBackdropImage(
+            url: _book.cover,
+          )),
+          Positioned(
+              top: kToolbarHeight,
+              left: 16,
+              bottom: 10,
+              right: 0,
+              child: Row(
+                children: [
+                  CacheNetWorkImage(_book.cover),
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Text(_book.name),
+                        ),
+                        Expanded(child: Text(_book.author))
+                      ],
+                    ),
+                  ))
+                ],
+              )),
+        ],
       ),
     );
   }

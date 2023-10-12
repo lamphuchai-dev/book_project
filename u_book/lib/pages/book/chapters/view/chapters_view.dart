@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/data/models/book.dart';
+import 'package:u_book/di/components/service_locator.dart';
+import 'package:u_book/services/extensions_manager.dart';
 
 
 import '../cubit/chapters_cubit.dart';
@@ -14,7 +16,7 @@ class ChaptersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChaptersCubit(book: book)..onInit(),
+      create: (context) => ChaptersCubit(book: book,extensionsManager: getIt<ExtensionsManager>())..onInit(),
       child: const ChaptersPage(),
     );
   }

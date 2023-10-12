@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/extensions/extensions.dart';
+import 'package:u_book/pages/bookmarks/bookmarks.dart';
 import 'package:u_book/pages/home/view/home_view.dart';
 import '../cubit/bottom_navigation_bar_cubit.dart';
 
@@ -23,7 +24,7 @@ class _BottomNavigationBarPageState extends State<BottomNavigationBarPage> {
 
   @override
   Widget build(BuildContext context) {
-    final tabs = [const HomeView(), Container()];
+    final tabs = [const BookmarksView(), const HomeView()];
     return BlocBuilder<BottomNavigationBarCubit, BottomNavigationBarState>(
       buildWhen: (previous, current) =>
           previous.indexSelected != current.indexSelected,

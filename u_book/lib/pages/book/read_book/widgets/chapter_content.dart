@@ -5,48 +5,43 @@ import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/data/models/book.dart';
 import 'package:u_book/data/models/chapter.dart';
-import 'package:u_book/data/models/chapter_content.dart';
-import 'package:u_book/di/components/service_locator.dart';
-import 'package:u_book/services/extension_run_time.dart';
-import 'package:u_book/services/extensions_manager.dart';
 import 'package:u_book/widgets/cache_network_image.dart';
 import 'package:u_book/widgets/widgets.dart';
 
 import '../cubit/read_book_cubit.dart';
-// import 'package:zoom_widget/zoom_widget.dart';
 
 class ChapterContent extends StatefulWidget {
   const ChapterContent(
-      {super.key, required this.chapter, required this.pageController});
+      {super.key,
+      required this.chapter,
+      required this.pageController,
+      required this.getChapterContent});
   final Chapter chapter;
   final PageController pageController;
+  final Future<Chapter> Function() getChapterContent;
 
   @override
   State<ChapterContent> createState() => _ChapterContentState();
 }
 
-class _ChapterContentState extends State<ChapterContent>
-    with AutomaticKeepAliveClientMixin {
-  bool _loadContent = false;
-
-  List<ComicContent> list = [];
+class _ChapterContentState extends State<ChapterContent> {
   late ScrollController _scrollController;
-  late ValueNotifier<ContentPagination?> _contentPaginationValue;
+
   double? _heightScreen;
   late ReadBookCubit _readBookCubit;
 
+  late StatusType _statusType;
+  late Chapter _chapter;
+
   bool _autoScroll = false;
-  late ExtensionRunTime _extensionRunTime;
 
   @override
   void initState() {
-    _extensionRunTime = getIt<ExtensionsManager>().runTimePrimary!;
-
+    _statusType = StatusType.init;
+    _chapter = widget.chapter;
     if (mounted) {
-      _onGet();
+      _getChapterContent();
     }
-
-    _contentPaginationValue = ValueNotifier(null);
     _scrollController = ScrollController();
     _scrollController.addListener(_handlerScrollListener);
     _readBookCubit = context.read<ReadBookCubit>();
@@ -63,7 +58,7 @@ class _ChapterContentState extends State<ChapterContent>
       final heightContentFull = _scrollController.position.maxScrollExtent;
       final heightCurrentContent = _scrollController.offset;
       _heightScreen ??= context.height;
-      _contentPaginationValue.value = ContentPagination(
+      final value = ContentPagination(
           sliderValue: (heightCurrentContent / heightContentFull) * 100,
           totalPage: heightContentFull ~/ _heightScreen! == 0
               ? 1
@@ -71,20 +66,28 @@ class _ChapterContentState extends State<ChapterContent>
           currentPage: heightCurrentContent ~/ _heightScreen! == 0
               ? 1
               : heightCurrentContent ~/ _heightScreen!);
-    } catch (error) {}
+      _readBookCubit.setContentPagination(value);
+    } catch (error) {
+      debugPrint(error.toString());
+    }
   }
 
-  void _onGet() async {
-    setState(() {
-      _loadContent = true;
-    });
-    final content = await _extensionRunTime.chapter(widget.chapter.url);
-    if (content is List) {
-      list = content.map((e) => ComicContent.fromMap(e)).toList();
+  void _getChapterContent() async {
+    try {
+      setState(() {
+        _statusType = StatusType.loading;
+      });
+      _chapter = await widget.getChapterContent.call();
+      if (mounted) {
+        setState(() {
+          _statusType = StatusType.loaded;
+        });
+      }
+    } catch (error) {
+      setState(() {
+        _statusType = StatusType.error;
+      });
     }
-    setState(() {
-      _loadContent = false;
-    });
   }
 
   void _closeAutoScroll() {
@@ -93,9 +96,6 @@ class _ChapterContentState extends State<ChapterContent>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
-    final textTheme = context.appTextTheme;
     final width = context.width;
 
     return MultiBlocListener(
@@ -143,79 +143,83 @@ class _ChapterContentState extends State<ChapterContent>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: kToolbarHeight,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            alignment: Alignment.bottomLeft,
-            child: Text(
-              widget.chapter.title,
-              style: textTheme.bodySmall?.copyWith(fontSize: 12),
-            ),
-          ),
+          // Container(
+          //   height: kToolbarHeight,
+          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          //   alignment: Alignment.bottomLeft,
+          //   child: Text(
+          //     widget.chapter.title,
+          //     style: textTheme.bodySmall?.copyWith(fontSize: 12),
+          //   ),
+          // ),
           Expanded(
-            child: _loadContent
-                ? const LoadingWidget()
-                : SingleChildScrollView(
-                    physics: _readBookCubit.getPhysicsScroll(),
-                    controller: _scrollController,
-                    child: BlocBuilder<ReadBookCubit, ReadBookState>(
-                      builder: (context, state) {
-                        final headers = {"Referer": _readBookCubit.book.host};
-                        return switch (_readBookCubit.bookType) {
-                          BookType.comic => Column(
-                              children: list
-                                  .map((e) => CacheNetWorkImage(
-                                        e.url,
-                                        fit: BoxFit.fitWidth,
-                                        width: width,
-                                        headers: headers,
-                                        placeholder: Container(
-                                            height: 200,
-                                            alignment: Alignment.center,
-                                            child: const SpinKitPulse(
-                                              color: Colors.grey,
-                                            )),
-                                      ))
-                                  .toList(),
-                            ),
-                          _ => const SizedBox()
-                        };
-                      },
-                    ),
-                  ),
-          ),
-          _buildFooterWidget()
+              child: switch (_statusType) {
+            StatusType.loading => const LoadingWidget(),
+            StatusType.loaded => SingleChildScrollView(
+                physics: _readBookCubit.getPhysicsScroll(),
+                controller: _scrollController,
+                child: BlocBuilder<ReadBookCubit, ReadBookState>(
+                  builder: (context, state) {
+                    // final headers = {"Referer": _readBookCubit.book.host};
+                    return switch (_readBookCubit.bookType) {
+                      BookType.comic => Column(
+                          children: _chapter.content
+                              .map((e) => CacheNetWorkImage(
+                                    e,
+                                    fit: BoxFit.fitWidth,
+                                    width: width,
+                                    // headers: headers,
+                                    placeholder: Container(
+                                        height: 200,
+                                        alignment: Alignment.center,
+                                        child: const SpinKitPulse(
+                                          color: Colors.grey,
+                                        )),
+                                  ))
+                              .toList(),
+                        ),
+                      _ => const SizedBox()
+                    };
+                  },
+                ),
+              ),
+            StatusType.error => const Center(
+                child: Icon(Icons.error),
+              ),
+            _ => const SizedBox()
+          }),
+          // _buildFooterWidget()
         ],
       ),
     );
   }
 
-  Widget _buildFooterWidget() {
-    const textStyle = TextStyle(fontSize: 11);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Row(
-        children: [
-          Text(
-            "${widget.chapter.index}/${_readBookCubit.book.totalChapter}",
-            style: textStyle,
-            textAlign: TextAlign.left,
-          ),
-          ValueListenableBuilder(
-            valueListenable: _contentPaginationValue,
-            builder: (context, value, child) {
-              if (value == null) return const SizedBox();
-              return Text(
-                value.formatText,
-                style: textStyle,
-                textAlign: TextAlign.right,
-              );
-            },
-          )
-        ].expandedEqually().toList(),
-      ),
-    );
-  }
+  // Widget _buildFooterWidget() {
+  //   const textStyle = TextStyle(fontSize: 11);
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+  //     child: Row(
+  //       children: [
+  //         Text(
+  //           "${widget.chapter.index}/${_readBookCubit.book.totalChapter}",
+  //           style: textStyle,
+  //           textAlign: TextAlign.left,
+  //         ),
+  //         ValueListenableBuilder(
+  //           valueListenable: _contentPaginationValue,
+  //           builder: (context, value, child) {
+  //             if (value == null) return const SizedBox();
+  //             return Text(
+  //               value.formatText,
+  //               style: textStyle,
+  //               textAlign: TextAlign.right,
+  //             );
+  //           },
+  //         )
+  //       ].expandedEqually().toList(),
+  //     ),
+  //   );
+  // }
 
   void _handlerAutoScroll() async {
     final state = _readBookCubit.state;
@@ -241,34 +245,8 @@ class _ChapterContentState extends State<ChapterContent>
   }
 
   @override
-  bool get wantKeepAlive => true;
-}
-
-class ContentPagination {
-  final int totalPage;
-  final int currentPage;
-  final double sliderValue;
-  ContentPagination(
-      {required this.totalPage,
-      required this.currentPage,
-      required this.sliderValue});
-
-  String get formatText => "$currentPage/$totalPage";
-
-  int get remainingPages => totalPage - currentPage;
-
-  ContentPagination copyWith({
-    int? totalPage,
-    int? currentPage,
-    double? sliderValue,
-  }) {
-    return ContentPagination(
-        totalPage: totalPage ?? this.totalPage,
-        currentPage: currentPage ?? this.currentPage,
-        sliderValue: sliderValue ?? this.sliderValue);
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
-
-  @override
-  String toString() =>
-      'ContentPagination(totalPage: $totalPage, currentPage: $currentPage)';
 }

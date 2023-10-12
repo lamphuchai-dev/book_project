@@ -6,7 +6,7 @@ import 'package:u_book/pages/bottom_navigation_bar/bottom_navigation_bar.dart';
 import 'package:u_book/pages/book/detail_book/detail_book.dart';
 import 'package:u_book/pages/book/chapters/chapters.dart';
 import 'package:u_book/pages/book/read_book/read_book.dart';
-import 'package:u_book/pages/bottom_navigation_bar/bottom_navigation_bar.dart';
+import 'package:u_book/pages/install_extension/install_extension.dart';
 import 'package:u_book/pages/splash/splash.dart';
 
 class Routes {
@@ -24,6 +24,12 @@ class Routes {
         return PageTransition(
             settings: settings,
             child: const BottomNavigationBarView(),
+            type: PageTransitionType.rightToLeft);
+
+      case RoutesName.installExt:
+        return PageTransition(
+            settings: settings,
+            child: const InstallExtensionView(),
             type: PageTransitionType.rightToLeft);
 
       case RoutesName.detailBook:
@@ -45,15 +51,15 @@ class Routes {
             type: PageTransitionType.rightToLeft);
 
       case RoutesName.readBook:
-        assert(
-            args != null && args is Map<String, dynamic>, "args must be Book");
+        assert(args != null && args is ReadBookArgs, "args must be Book");
 
-        args as Map;
         return PageTransition(
             settings: settings,
             child: ReadBookView(
-              book: args["book"]!,
-              chapter: args["chapter"],
+              // book: args["book"]!,
+              // chapter: args["chapter"],
+              // chapters: args["chapters"],
+              readBookArgs: args as ReadBookArgs,
             ),
             type: PageTransitionType.rightToLeft);
 

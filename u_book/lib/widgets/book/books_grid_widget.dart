@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:u_book/app/constants/dimens.dart';
@@ -12,18 +14,22 @@ typedef OnFetchListBook = Future<List<Book>> Function(int page);
 class BooksGridWidget extends StatefulWidget {
   const BooksGridWidget(
       {super.key,
-      required this.onFetchListBook,
+      this.onFetchListBook,
       this.emptyWidget,
       this.onChangeBooks,
       this.useFetch = true,
       this.useRefresh = true,
-      this.initialBooks});
-  final OnFetchListBook onFetchListBook;
+      this.initialBooks,
+      this.listenBooks = false,
+      this.onTap});
+  final OnFetchListBook? onFetchListBook;
   final Widget? emptyWidget;
   final ValueChanged<List<Book>>? onChangeBooks;
   final bool useFetch;
   final List<Book>? initialBooks;
   final bool useRefresh;
+  final bool listenBooks;
+  final ValueChanged<Book>? onTap;
 
   @override
   State<BooksGridWidget> createState() => _BooksGridWidgetState();
@@ -53,9 +59,6 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
     if (!widget.useFetch) {
       _listBook = widget.initialBooks ?? [];
     } else {
-      // WidgetsBinding.instance.addPostFrameCallback((_) {
-      //   _onLoading();
-      // });
       _onLoading();
     }
     super.initState();
@@ -66,7 +69,7 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
       _isLoading = true;
     });
     _page = 0;
-    _listBook = await widget.onFetchListBook.call(_page);
+    _listBook = await widget.onFetchListBook!.call(_page);
     widget.onChangeBooks?.call(_listBook);
     setState(() {
       _isLoading = false;
@@ -79,12 +82,10 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
     });
     try {
       _page++;
-      final list = await widget.onFetchListBook.call(_page);
+      final list = await widget.onFetchListBook!.call(_page);
       if (list.isNotEmpty) {
         setState(() {
           _listBook.addAll(list);
-          // _listBook = _listBook
-
         });
         widget.onChangeBooks?.call(_listBook);
       }
@@ -119,7 +120,7 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
     }
 
     if (_listBook.isEmpty) {
-      return widget.emptyWidget ?? const Text("data");
+      return widget.emptyWidget ?? const _EmptyBooks();
     }
 
     final girdConfig = _get(3);
@@ -145,10 +146,7 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
                   final book = _listBook[index];
                   return ItemBook(
                     book: book,
-                    onTap: () {
-                      Navigator.pushNamed(context, RoutesName.detailBook,
-                          arguments: book);
-                    },
+                    onTap: () => widget.onTap?.call(book),
                     onLongTap: () {},
                   );
                 },
@@ -172,6 +170,16 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
     );
   }
 
+  @override
+  void didUpdateWidget(covariant BooksGridWidget oldWidget) {
+    if (widget.initialBooks != oldWidget.initialBooks) {
+      setState(() {
+        _listBook = widget.initialBooks!;
+      });
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   Widget _refreshWidget({required Widget child}) {
     if (widget.useRefresh) {
       return RefreshIndicator(
@@ -182,5 +190,20 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
       );
     }
     return child;
+  }
+}
+
+class _EmptyBooks extends StatelessWidget {
+  const _EmptyBooks({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = context.appTextTheme;
+    return Center(
+      child: Text(
+        "Không có dữ liệu hiện thị",
+        style: textTheme.bodyLarge,
+      ),
+    );
   }
 }

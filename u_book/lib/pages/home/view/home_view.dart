@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:u_book/data/models/extension.dart';
 import 'package:u_book/di/components/service_locator.dart';
 import 'package:u_book/services/extensions_manager.dart';
+import 'package:u_book/services/storage_service.dart';
 import '../cubit/home_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'home_page.dart';
@@ -13,8 +13,10 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          HomeCubit(extensionsManager: getIt<ExtensionsManager>())..onInit(),
+      create: (context) => HomeCubit(
+          extensionsManager: getIt<ExtensionsManager>(),
+          storageService: getIt<StorageService>())
+        ..onInit(),
       child: const HomePage(),
     );
   }

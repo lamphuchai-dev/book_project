@@ -1,94 +1,78 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio_client/index.dart';
 import 'package:u_book/data/models/extension.dart';
 import 'package:u_book/services/database_service.dart';
 import 'package:u_book/services/extension_run_time.dart';
-import 'package:u_book/services/storage_service.dart';
 import 'package:u_book/utils/logger.dart';
 
 class ExtensionsManager {
   ExtensionsManager(
-      {required DioClient dioClient,
-      required StorageService storageService,
-      required DatabaseService databaseService})
+      {required DioClient dioClient, required DatabaseService databaseService})
       : _dioClient = dioClient,
-        _storageService = storageService,
         _databaseService = databaseService;
 
   final _logger = Logger("ExtensionsManager");
 
-  List<Extension> _extensions = [];
+  late Map<String, ExtensionRunTime> _extsRuntime;
+
   final DioClient _dioClient;
-  final StorageService _storageService;
   final DatabaseService _databaseService;
 
-  ExtensionRunTime? _runTimePrimary;
-  Extension? _extensionPrimary;
+  final StreamController<Map<String, ExtensionRunTime>>
+      _changeExtsStreamController = StreamController.broadcast();
 
-  List<Extension> get extensions => _extensions;
+  Future<void> onInit() async {}
 
-  Extension? get extensionPrimary => _extensionPrimary;
-
-  ExtensionRunTime? get runTimePrimary => _runTimePrimary;
-
-  Future<void> onInit() async {
-    await Future.wait([onLoadExtensions()]);
-    if (_runTimePrimary == null && extensions.isNotEmpty) {
-      final ext = extensions.firstWhere((element) => element.isPrimary,
-          orElse: () => extensions.first);
-      await setRunTimePrimary(ext);
-    }
+  void streamExtensions() {
+    _databaseService.database.extensions.watchLazy().listen((event) {});
   }
 
-  Future<ExtensionRunTime?> setRunTimePrimary(Extension extension) async {
+  Stream<Map<String, ExtensionRunTime>> get streamExts =>
+      _changeExtsStreamController.stream;
+
+  Stream<void> get extensionsChange => _databaseService.extensionsChange;
+// 286984166
+  Future<void> onLoadLocalExtensions() async {
     try {
-      List<Extension> extensions = [];
-      if (_extensionPrimary != null) {
-        final preExt = _extensionPrimary!.copyWith(isPrimary: false);
-        extensions.add(preExt);
-      }
-      _runTimePrimary = ExtensionRunTime();
-      if (extension.jsScript == null) {
-        final jsScript = await getJsScriptByUrl(extension.script);
-        if (jsScript is String) {
-          extension = extension.copyWith(jsScript: jsScript);
-        }
-      }
-      extension = extension.copyWith(isPrimary: true);
-
-      final extReady = await _runTimePrimary!.initRuntime(extension);
-      if (extReady) {
-        extensions.add(extension);
-        _databaseService.changeIsPrimaryExtension(extensions);
-        _extensionPrimary = extension;
-        return _runTimePrimary!;
-      }
-      return null;
+      late Map<String, ExtensionRunTime> localExtsRuntime = {};
+      final localExts = await _databaseService.getExtensions();
+      await Future.forEach(localExts, (ext) async {
+        await Future.delayed(const Duration(seconds: 1));
+        final extRuntime = ExtensionRunTime();
+        final isReady = await extRuntime.initRuntime(ext);
+        if (!isReady) return;
+        localExtsRuntime[ext.source] = extRuntime;
+      });
+      _extsRuntime = localExtsRuntime;
+      _changeExtsStreamController.add(_extsRuntime);
     } catch (error) {
-      rethrow;
+      _logger.log(error, name: "onLoadLocalExtensions");
     }
   }
+
+  void delete(String source) {
+    if (_extsRuntime.containsKey(source)) {
+      _extsRuntime.remove(source);
+    }
+  }
+
+  ExtensionRunTime? getExtensionRunTimeBySource(String source) =>
+      _extsRuntime[source];
+
+  Future<ExtensionRunTime?> getExtensionRunTimeBySourceTmp(
+      Extension extension) async {
+    final extRuntime = ExtensionRunTime();
+    final isReady = await extRuntime.initRuntime(extension);
+    return extRuntime;
+  }
+
+  List<Extension> get getExtensions =>
+      _extsRuntime.values.map((e) => e.extension).toList();
 
   Future<dynamic> getJsScriptByUrl(String url) async {
     return _dioClient.get(url);
-  }
-
-  Future<bool> onLoadExtensions() async {
-    try {
-      final localExts = await _databaseService.findAllExtensions();
-      if (localExts.isEmpty) {
-        final exts = await onGetExtensions();
-        await _databaseService.insertExtensions(exts);
-        return onLoadExtensions();
-      } else {
-        _extensions = localExts;
-        return true;
-      }
-    } catch (error) {
-      _logger.error(error, name: "onLoadExtensions");
-    }
-    return false;
   }
 
   Future<List<Extension>> onGetExtensions() async {
@@ -105,5 +89,43 @@ class ExtensionsManager {
       _logger.error(error, name: "onGetExtensions");
     }
     return [];
+  }
+
+  Future<Extension?> installExtension(Extension extension) async {
+    try {
+      final checkHostExt = await _dioClient.get(extension.source);
+      final jsScriptByExt = await _dioClient.get(extension.script);
+      extension = extension.copyWith(jsScript: jsScriptByExt);
+      final result = await _databaseService.addExtension(extension);
+      if (result is int) {
+        extension = extension.copyWith(id: result);
+        final extRuntime = ExtensionRunTime();
+        final isReady = await extRuntime.initRuntime(extension);
+        if (!isReady) return null;
+        _extsRuntime[extension.source] = extRuntime;
+        _changeExtsStreamController.add(_extsRuntime);
+        return extension;
+      }
+    } catch (error) {
+      _logger.log(error, name: "installExtension");
+    }
+    return null;
+  }
+
+  Future<bool> uninstallExtension(Extension extension) async {
+    try {
+      if (_extsRuntime.containsKey(extension.source)) {
+        _extsRuntime.remove(extension.source);
+      }
+      _changeExtsStreamController.add(_extsRuntime);
+      return _databaseService.deleteExtension(extension.id!);
+    } catch (error) {
+      _logger.log(error, name: "installExtension");
+    }
+    return false;
+  }
+
+  close() {
+    _changeExtsStreamController.close();
   }
 }

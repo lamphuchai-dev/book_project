@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/config/app_type.dart';
+import 'package:u_book/app/constants/assets.dart';
 import 'package:u_book/app/routes/routes_name.dart';
 import 'package:u_book/di/components/service_locator.dart';
 import 'package:u_book/services/database_service.dart';
@@ -28,35 +29,34 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<SplashCubit, SplashState>(
-        listenWhen: (previous, current) =>
-            previous.statusType != current.statusType,
+        listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
-          if (state.statusType == StatusType.loaded) {
+          if (state is LoadedLocalExts) {
             Navigator.pushReplacementNamed(context, RoutesName.bottomNav);
+          } else if (state is LocalExtsEmpty) {
+            Navigator.pushReplacementNamed(context, RoutesName.installExt);
           }
         },
-        child: const LoadingWidget(),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Align(
+                child: Image.asset(
+              AppAssets.iconApp,
+              width: 80,
+              height: 80,
+            )),
+            const Positioned(
+              bottom: 16,
+              left: 0,
+              right: 0,
+              child: LoadingWidget(
+                radius: 15,
+              ),
+            )
+          ],
+        ),
       ),
-      // body: SizedBox(
-      //   width: double.infinity,
-      //   height: double.infinity,
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: [
-      //       ElevatedButton(
-      //           onPressed: () {
-      //             db.tmp();
-      //           },
-      //           child: Text("Write")),
-      //       ElevatedButton(
-      //           onPressed: () async {
-      //             final res = await db.test();
-      //             print(res[0].toString());
-      //           },
-      //           child: Text("get"))
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

@@ -26,19 +26,22 @@ class BaseBottomSheetUi extends StatelessWidget {
             maxHeight: maxHeight,
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 45,
-                    padding: const EdgeInsets.only(top: 8),
+                Center(
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
                     child: Container(
-                      decoration: const ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(8))),
-                          color: Colors.grey),
-                      height: 6,
+                      width: 45,
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Container(
+                        decoration: const ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(8))),
+                            color: Colors.grey),
+                        height: 6,
+                      ),
                     ),
                   ),
                 ),

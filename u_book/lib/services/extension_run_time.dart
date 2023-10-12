@@ -7,6 +7,8 @@ import 'package:dio_client/index.dart';
 import 'package:flutter_js/flutter_js.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:u_book/app/extensions/log_extension.dart';
+import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/utils/directory_utils.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 
@@ -26,7 +28,6 @@ class ExtensionRunTime {
   Future<bool> initRuntime(Extension ext) async {
     extension = ext;
     runtime = getJavascriptRuntime();
-    _dioClient.enableCookie(dir: await DirectoryUtils.getDirectory);
 
     runtime.onMessage('request', (dynamic args) async {
       _logger.log("request args ::: $args");
@@ -143,6 +144,9 @@ class ExtensionRunTime {
     runtime.evaluate(mainCode);
     final ext = extension.jsScript!.replaceAll(
         RegExp(r'export default class.*'), 'class Ext extends Extension {');
+
+    // final ext = sayTruyen.replaceAll(
+    //     RegExp(r'export default class.*'), 'class Ext extends Extension {');
     JsEvalResult jsResult = await runtime.evaluateAsync('''
     $ext
     var extension = new Ext("${extension.source}","${extension.name}");
@@ -174,22 +178,6 @@ class ExtensionRunTime {
     }
   }
 
-  Future<Book> detail(String url) async {
-    return await _runExtension(() async {
-      final jsResult = await runtime.handlePromise(await runtime
-          .evaluateAsync('stringify(()=>extension.detail("$url"))'));
-
-      final mapResult = jsResult.toJson;
-      // return (
-      //   book: Book.fromExtensionType(extension.type, mapResult),
-      //   chapters: mapResult["chapters"] != null
-      //       ? List<Chapter>.from(chapters)
-      //       : <Chapter>[]
-      // );
-      return Book.fromExtensionType(extension.type, mapResult);
-    });
-  }
-
   Future<List<Book>> getListBook({required String url, int? page}) async {
     return _runExtension(() async {
       final jsResult = await runtime.handlePromise(await runtime
@@ -200,11 +188,34 @@ class ExtensionRunTime {
     });
   }
 
-  Future<dynamic> chapter(String url) async {
+  Future<Book> detail(String url) async {
+    return await _runExtension(() async {
+      final jsResult = await runtime.handlePromise(await runtime
+          .evaluateAsync('stringify(()=>extension.detail("$url"))'));
+
+      final mapResult = jsResult.toJson;
+      return Book.fromExtensionType(extension.type, mapResult);
+    });
+  }
+
+  Future<List<Chapter>> getChapters(String url) async {
+    return _runExtension(() async {
+      final jsResult = await runtime.handlePromise(await runtime
+          .evaluateAsync('stringify(()=>extension.chapters("$url"))'));
+      List<Chapter> chapters = (jsResult.toJson
+          .map<Chapter>((map) => Chapter.fromMap(map))
+          .toList());
+      chapters.sort((a, b) => a.index.compareTo(b.index));
+      return chapters;
+    });
+  }
+
+  Future<List<String>> chapter(String url) async {
     return _runExtension(() async {
       final jsResult = await runtime.handlePromise(await runtime
           .evaluateAsync('stringify(()=>extension.chapter("$url"))'));
-      return jsResult.toJson;
+
+      return List<String>.from(jsResult.toJson);
     });
   }
 
