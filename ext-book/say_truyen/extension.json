@@ -2,6 +2,7 @@
   "metadata": {
     "name": "Say Truyện",
     "author": "uBook",
+    "slug": "say-truyen",
     "version": 1,
     "source": "https://saytruyenmoi.com",
     "regexp": "",
