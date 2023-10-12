@@ -20,10 +20,10 @@
     "enableGenre": true
   },
   "script": {
-    "home": "/src/home.js",
-    "detail": "/src/detail.js",
-    "chapters": "/src/chapters.js",
-    "chapter": "/src/chapter.js",
-    "search": "/src/search.js"
+    "home": "src/home.js",
+    "detail": "src/detail.js",
+    "chapters": "src/chapters.js",
+    "chapter": "src/chapter.js",
+    "search": "src/search.js"
   }
 }
