@@ -10,15 +10,13 @@
     "locale": "vi_VN",
     "language": "javascript",
     "type": "comic",
-    "path": "https://raw.githubusercontent.com/lamphuchai-dev/book_project/main/ext-book/say_truyen.js",
+    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/say_truyen/extension.zip",
     "tabsHome": [
       { "title": "Truyện mới cập nhật", "url": "/" },
       { "title": "Manhwa", "url": "/genre/manhwa" },
       { "title": "Manga", "url": "/genre/manga" },
       { "title": "Romance", "url": "/genre/romance" }
-    ],
-    "enableSearch": true,
-    "enableGenre": true
+    ]
   },
   "script": {
     "home": "src/home.js",

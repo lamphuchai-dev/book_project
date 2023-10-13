@@ -1,5 +1,5 @@
 async function search(url, kw, page) {
-  const res = await Extension.request(url, {
+  const res = await Extension.request(url + "/search", {
     queryParameters: {
       page: page,
       s: kw,

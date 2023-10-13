@@ -102,9 +102,6 @@ export default class extends Extension {
       if (image && image.startsWith("//")) {
         image = "https:" + image;
       }
-      // if (otherUrl && otherUrl.startsWith("//")) {
-      //   otherUrl = "https:" + otherUrl;
-      // }
       result.push(image);
     }
     return result;
