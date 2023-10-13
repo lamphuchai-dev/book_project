@@ -1,5 +1,5 @@
 async function home(url, page) {
-  const res = await Extension.request(Extension.hostExt + url, {
+  const res = await Extension.request(url, {
     queryParameters: { page: page ?? 0 },
   });
   const list = await Extension.querySelectorAll(res, "div.items div.item");
