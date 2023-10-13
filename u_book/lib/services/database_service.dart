@@ -52,7 +52,7 @@ class DatabaseService {
   }
 
   Future<bool> deleteExtension(int id) {
-    return database.writeTxn(() => database.books.delete(id));
+    return database.writeTxn(() => database.extensions.delete(id));
   }
 
   Future<Book?> getBookByUrl(String bookUrl) =>

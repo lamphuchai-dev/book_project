@@ -15,8 +15,7 @@ class InstallExtensionCubit extends Cubit<InstallExtensionState> {
             installedExts: extensionsManager.getExtensions,
             notInstalledExts: const [],
             statusType: StatusType.init)) {
-    _streamSubscription = _extensionsManager.extensionsChange.listen((_) {
-      final exts = _extensionsManager.getExtensions;
+    _streamSubscription = _extensionsManager.streamExts.listen((exts) {
       emit(state.copyWith(installedExts: exts));
     });
   }
@@ -35,12 +34,13 @@ class InstallExtensionCubit extends Cubit<InstallExtensionState> {
   }
 
   Future<bool> onInstallExt(Extension extension) async {
-    final ext = await _extensionsManager.installExtension(extension);
-    if (ext != null) {
-      final exts = _extensionsManager.getExtensions;
-      emit(state.copyWith(installedExts: exts));
+    final isInstallExt = await _extensionsManager.installExtension(extension);
+    if (isInstallExt) {
+      final exts = state.notInstalledExts;
+      final noIn = exts.where((ext) => ext.source != extension.source).toList();
+      emit(state.copyWith(notInstalledExts: noIn));
     }
-    return ext != null;
+    return isInstallExt;
   }
 
   Future<bool> onUninstallExt(Extension extension) async {

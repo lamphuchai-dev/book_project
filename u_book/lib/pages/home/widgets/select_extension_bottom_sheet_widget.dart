@@ -4,6 +4,7 @@ import 'package:u_book/app/constants/gaps.dart';
 import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/app/routes/routes_name.dart';
 import 'package:u_book/data/models/extension.dart';
+import 'package:u_book/pages/splash/view/extension/extension_model.dart';
 import 'package:u_book/widgets/widgets.dart';
 
 class SelectExtensionBottomSheet extends StatelessWidget {
@@ -12,9 +13,9 @@ class SelectExtensionBottomSheet extends StatelessWidget {
       required this.extensions,
       required this.onSelected,
       required this.exceptionPrimary});
-  final List<Extension> extensions;
-  final ValueChanged<Extension> onSelected;
-  final Extension exceptionPrimary;
+  final List<ExtensionModel> extensions;
+  final ValueChanged<ExtensionModel> onSelected;
+  final ExtensionModel exceptionPrimary;
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +51,12 @@ class SelectExtensionBottomSheet extends StatelessWidget {
                     children: extensions
                         .map((ext) => ExtensionCard(
                               extension: ext,
-                              isPrimary: ext.id == exceptionPrimary.id,
+                              isPrimary: false,
                               onTap: () {
-                                if (!ext.isPrimary) {
-                                  onSelected.call(ext);
-                                }
-                                // onSelected.call(ext);
+                                // if (!ext.isPrimary) {
+                                //   onSelected.call(ext);
+                                // }
+                                onSelected.call(ext);
 
                                 Navigator.pop(context);
                               },
@@ -77,7 +78,7 @@ class ExtensionCard extends StatelessWidget {
       required this.extension,
       required this.onTap,
       this.isPrimary = false});
-  final Extension extension;
+  final ExtensionModel extension;
   final VoidCallback onTap;
   final bool isPrimary;
 
@@ -86,7 +87,7 @@ class ExtensionCard extends StatelessWidget {
     final textTheme = context.appTextTheme;
     final colorScheme = context.colorScheme;
     final width = context.width / 2 - 16;
-    final uri = Uri.parse(extension.source);
+    final uri = Uri.parse(extension.metadata.source);
 
     return GestureDetector(
       onTap: onTap,
@@ -104,7 +105,7 @@ class ExtensionCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              extension.name,
+              extension.metadata.name,
               style: textTheme.titleMedium,
             ),
             Text(

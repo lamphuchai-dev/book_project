@@ -1,0 +1,113 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:archive/archive_io.dart';
+import 'package:dio/dio.dart';
+import 'package:dio_client/index.dart';
+import 'package:u_book/app/extensions/extensions.dart';
+import 'package:u_book/pages/splash/view/extension/extension_model.dart';
+import 'package:u_book/pages/splash/view/extension/metadata.dart';
+import 'package:u_book/pages/splash/view/extension/script.dart';
+import 'package:u_book/utils/directory_utils.dart';
+import 'package:u_book/utils/logger.dart';
+
+class ExtensionManager {
+  final _logger = Logger('ExtensionsManager');
+  List<ExtensionModel> _exts = [];
+  final DioClient _dioClient = DioClient();
+
+  List<ExtensionModel> get getExtensions => _exts;
+
+  Future<void> onInit() async {
+    await loadLocalExtension();
+  }
+
+  Future<void> loadLocalExtension() async {
+    final dir = await DirectoryUtils.getListFileExt();
+    List<ExtensionModel> exts = [];
+    for (var item in dir) {
+      final extFile = File("${item.path}/extension.json");
+      final ext = ExtensionModel.fromJson(extFile.readAsStringSync());
+      exts.add(ext);
+    }
+    _logger.log("exts = ${exts.length}", name: "loadLocalExtension");
+    _exts = exts;
+  }
+
+  Future<ExtensionModel?> installExtensionByUrl(String url) async {
+    try {
+      final res = await _dioClient.get(url,
+          options: Options(responseType: ResponseType.bytes));
+      if (res is List<int>) {
+        final archive = ZipDecoder().decodeBytes(res);
+        final fileExt = archive.files
+            .firstWhereOrNull((item) => item.name == "extension.json");
+        if (fileExt != null) {
+          final contentString = utf8.decode(fileExt.content as List<int>);
+          ExtensionModel ext = ExtensionModel.fromJson(contentString);
+          final path = await DirectoryUtils.getDirectoryExtensions;
+          Script script = Script();
+          final pathExt = "$path/${ext.metadata.slug}";
+          for (final file in archive) {
+            final filename = file.name;
+            final pathFile = "$pathExt/$filename";
+            if (file.isFile) {
+              final data = file.content as List<int>;
+              File(pathFile)
+                ..createSync(recursive: true)
+                ..writeAsBytesSync(data);
+              if (ext.script.home == filename) {
+                script.home = pathFile;
+              } else if (ext.script.detail == filename) {
+                script.detail = pathFile;
+              } else if (ext.script.chapters == filename) {
+                script.chapters = pathFile;
+              } else if (ext.script.chapter == filename) {
+                script.chapter = pathFile;
+              } else if (ext.script.search == filename) {
+                script.search = pathFile;
+              } else if (ext.script.genre == filename) {
+                script.genre = pathFile;
+              }
+            } else {
+              Directory(pathFile).create(recursive: true);
+            }
+          }
+          ext = ext.copyWith(
+              script: script,
+              metadata: ext.metadata.copyWith(localPath: pathExt));
+          File("$pathExt/$fileExt")
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(utf8.encode(ext.toJson()));
+          return ext;
+        }
+      }
+    } catch (error) {
+      _logger.error(error, name: "installExtensionByUrl");
+    }
+    return null;
+  }
+
+  Future<bool> uninstallExtension(ExtensionModel extensionModel) async {
+    final dirExt =
+        DirectoryUtils.getDirectoryByPath(extensionModel.metadata.localPath);
+    if (dirExt.existsSync()) {
+      dirExt.deleteSync();
+      return true;
+    }
+    return false;
+  }
+
+  Future<List<Metadata>> getListExts() async {
+    try {
+      final res = await _dioClient.get(
+          "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/extensions.json");
+      final metadata = jsonDecode(res)
+          .map<Metadata>((map) => Metadata.fromMap(map))
+          .toList();
+      return metadata;
+    } catch (error) {
+      return [];
+    }
+  }
+}

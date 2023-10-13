@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_js/flutter_js.dart';
 import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/data/models/book.dart';
@@ -8,11 +9,10 @@ import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/pages/book/read_book/read_book.dart';
 import 'package:u_book/pages/home/cubit/home_cubit.dart';
 import 'package:u_book/services/database_service.dart';
-import 'package:u_book/services/extension_run_time.dart';
+import 'package:u_book/services/extension_runtime.dart';
 import 'package:u_book/services/extensions_manager.dart';
 import 'package:u_book/utils/logger.dart';
 import 'package:u_book/utils/system_utils.dart';
-
 part 'read_book_state.dart';
 
 class ReadBookCubit extends Cubit<ReadBookState> {
@@ -49,32 +49,7 @@ class ReadBookCubit extends Cubit<ReadBookState> {
       ValueNotifier(null);
 
   void onInit() async {
-    // if (_readBookArgs.fromBookmarks) {
-    //   final ext = await _extensionsManager.getExtensionByHost(book.host);
-    //   if (ext != null) {
-    //     _extensionRunTime = ext;
-    //     final list = await _extensionRunTime.getChapters(book.bookUrl);
-    //     chapters = list;
-
-    //     final initReadChapter = chapters.firstWhereOrNull(
-    //         (item) => item.index == _readBookArgs.readChapter);
-    //     readChapter.value = initReadChapter ?? chapters.first;
-    //     pageController = PageController(
-    //         initialPage: initReadChapter != null
-    //             ? chapters.indexOf(initReadChapter)
-    //             : 0);
-    //     emit(BaseReadBook(totalChapters: state.totalChapters));
-    //   } else {
-    //     print("error");
-    //   }
-    // } else {
-    //   _extensionRunTime = _extensionsManager.runTimePrimary!;
-    //   chapters = _readBookArgs.chapters;
-    //   readChapter.value = chapters[initialPage];
-    //   pageController = PageController(initialPage: initialPage);
-    //   emit(BaseReadBook(totalChapters: state.totalChapters));
-    // }
-    final ext = _extensionsManager.getExtensionRunTimeBySource(book.host);
+    final ext = await _extensionsManager.getExtensionRunTimeBySource(book.host);
     if (ext == null) {
       emit(ReadBookInitial(
           totalChapters: _readBookArgs.chapters.length,
@@ -230,7 +205,6 @@ class ReadBookCubit extends Cubit<ReadBookState> {
     final state = this.state;
     if (state is AutoScrollReadBook) {
       emit(state.copyWith(scrollStatus: AutoScrollStatus.stop));
-
       if (indexPageChapter + 1 < chapters.length) {
         pageController?.jumpToPage(indexPageChapter + 1);
         emit(state.copyWith(scrollStatus: AutoScrollStatus.start));

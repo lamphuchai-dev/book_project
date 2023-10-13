@@ -3,27 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/data/models/book.dart';
 import 'package:u_book/data/models/chapter.dart';
+import 'package:u_book/services/extension_runtime.dart';
 import 'package:u_book/services/extensions_manager.dart';
 import 'package:u_book/utils/logger.dart';
 
 part 'chapters_state.dart';
 
 class ChaptersCubit extends Cubit<ChaptersState> {
-  ChaptersCubit(
-      {required this.book, required ExtensionsManager extensionsManager})
-      : _extensionsManager = extensionsManager,
-        super(const ChaptersState(chapters: [], statusType: StatusType.init));
+  ChaptersCubit({required this.book, required this.extensionRunTime})
+      : super(const ChaptersState(chapters: [], statusType: StatusType.init));
   final _logger = Logger("ChaptersCubit");
   final Book book;
 
-  final ExtensionsManager _extensionsManager;
+  final ExtensionRunTime extensionRunTime;
 
   void onInit() async {
     emit(state.copyWith(statusType: StatusType.loading));
     try {
-      final chapters = await _extensionsManager
-          .getExtensionRunTimeBySource(book.host)!
-          .getChapters(book.bookUrl);
+      final chapters = await extensionRunTime.getChapters(book.bookUrl);
       emit(state.copyWith(statusType: StatusType.loaded, chapters: chapters));
     } catch (error) {
       emit(state.copyWith(statusType: StatusType.error));

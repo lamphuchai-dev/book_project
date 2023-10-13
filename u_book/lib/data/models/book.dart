@@ -9,6 +9,7 @@
 import 'dart:convert';
 
 import 'package:isar/isar.dart';
+
 import 'package:u_book/data/models/extension.dart';
 
 part 'book.g.dart';
@@ -126,4 +127,9 @@ class Book {
 
   factory Book.fromJson(String source) =>
       Book.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() {
+    return 'Book(id: $id, name: $name, bookUrl: $bookUrl, author: $author, description: $description, cover: $cover, host: $host, totalChapter: $totalChapter, type: $type, bookmark: $bookmark, currentReadChapter: $currentReadChapter, updateAt: $updateAt)';
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:dio_client/index.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:u_book/pages/splash/view/extensions_manager.dart';
 import 'package:u_book/services/database_service.dart';
 import 'package:u_book/services/storage_service.dart';
 
@@ -31,4 +32,6 @@ Future<void> setupLocator() async {
   getIt.registerSingleton(SecureStorage(LocalModule.provideSecureStorage()));
   getIt.registerSingleton(
       SharedPreferenceHelper(await getIt.getAsync<SharedPreferences>()));
+
+  getIt.registerSingleton(ExtensionManager());
 }

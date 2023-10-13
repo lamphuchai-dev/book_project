@@ -1,5 +1,6 @@
 // ignore_for_file: unused_element, depend_on_referenced_packages
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -28,7 +29,8 @@ class ExtensionRunTime {
   Future<bool> initRuntime(Extension ext) async {
     extension = ext;
     runtime = getJavascriptRuntime();
-
+    runtime.setInspectable(true);
+    runtime.enableHandlePromises();
     runtime.onMessage('request', (dynamic args) async {
       _logger.log("request args ::: $args");
 
@@ -142,11 +144,11 @@ class ExtensionRunTime {
 
   Future<bool> _installExtension() async {
     runtime.evaluate(mainCode);
-    final ext = extension.jsScript!.replaceAll(
-        RegExp(r'export default class.*'), 'class Ext extends Extension {');
-
-    // final ext = sayTruyen.replaceAll(
+    // final ext = extension.jsScript!.replaceAll(
     //     RegExp(r'export default class.*'), 'class Ext extends Extension {');
+
+    final ext = sayTruyen.replaceAll(
+        RegExp(r'export default class.*'), 'class Ext extends Extension {');
     JsEvalResult jsResult = await runtime.evaluateAsync('''
     $ext
     var extension = new Ext("${extension.source}","${extension.name}");

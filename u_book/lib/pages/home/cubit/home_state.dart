@@ -16,7 +16,7 @@ class LoadingExtensionState extends HomeState {}
 
 class LoadedExtensionState extends HomeState {
   const LoadedExtensionState({required this.extension});
-  final Extension extension;
+  final ExtensionModel extension;
 
   @override
   List<Object> get props => [extension];
