@@ -134,3 +134,80 @@ async function detail(url) {
 const tmp = await detail();
 
 call(() => detail("fe"));
+
+async function home(url, page) {
+  const res = await Extension.request(url, {
+    queryParameters: {
+      page: page ?? 0,
+    },
+  });
+  const list = await Extension.querySelectorAll(res, "div.page-item-detail");
+  return list;
+  const result = [];
+  for (const item of list) {
+    const html = item.content;
+    var cover = await Extension.getAttributeText(html, "img", "data-src");
+
+    if (cover == null) {
+      cover = await Extension.getAttributeText(html, "img", "src");
+    }
+    if (cover && cover.startsWith("//")) {
+      cover = "https:" + cover;
+    }
+    result.push({
+      name: await Extension.querySelector(html, "div.post-title a").text,
+      bookUrl: await Extension.getAttributeText(
+        html,
+        "div.post-title a",
+        "href"
+      ),
+      description: await await Extension.querySelector(
+        html,
+        "div.chapter-item a"
+      ).text,
+      cover,
+    });
+    return result;
+  }
+}
+run(() => home("https://saytruyenmoi.com/"));
+
+async function home(url, page) {
+  const res = await Extension.request(url, {
+    queryParameters: {
+      page: page ?? 0,
+    },
+  });
+  // await Extension.querySelectorAll(html, "query")
+  // await Extension.querySelector(html, "query")
+  // await Extension.getAttributeText(html, "query","Attribute[src..]")
+
+  const list = await Extension.querySelectorAll(res, "div.page-item-detail");
+  const result = [];
+  for (const item of list) {
+    const html = item.content;
+    var cover = await Extension.getAttributeText(html, "img", "data-src");
+
+    if (cover == null) {
+      cover = await Extension.getAttributeText(html, "img", "src");
+    }
+    if (cover && cover.startsWith("//")) {
+      cover = "https:" + cover;
+    }
+    result.push({
+      name: await Extension.querySelector(html, "div.post-title a").text,
+      bookUrl: await Extension.getAttributeText(
+        html,
+        "div.post-title a",
+        "href"
+      ),
+      description: await await Extension.querySelector(
+        html,
+        "div.chapter-item a"
+      ).text,
+      cover,
+    });
+    return result;
+  }
+}
+runFn(() => home("https://saytruyenmoi.com/"));
