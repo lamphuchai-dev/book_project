@@ -24,5 +24,18 @@
     "language": "javascript",
     "type": "comic",
     "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/net_truyen/extension.zip"
+  },
+  {
+    "name": "Phê truyện",
+    "author": "uBook",
+    "slug": "phe_truyen",
+    "version": 1,
+    "source": "https://phetruyen.net",
+    "regexp": "",
+    "description": "Đọc truyện trên trang Phê truyện",
+    "locale": "vi_VN",
+    "language": "javascript",
+    "type": "comic",
+    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/phe_truyen/extension.zip"
   }
 ]
