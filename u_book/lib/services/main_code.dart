@@ -175,7 +175,7 @@ async function stringify(callback) {
 const netTruyen = '''
 export default class extends Extension {
 
-
+  async itemHome(url, page) {
     const res = await this.request( this.hostExt + url, { queryParameters: { page: page ?? 0 } });
     const list = await this.querySelectorAll(res, "div.items div.item");
     const result = [];
@@ -315,20 +315,14 @@ export default class extends Extension {
 
 const sayTruyen = '''
 export default class extends Extension {
- 
   async itemHome(url, page) {
-  let myPromise =   new Promise(function(myResolve, myReject) {
-        setTimeout(function() { myResolve("I love You !!"); }, 3000);
-      });
 
-    myPromise.then(function(value) {
-      console.log(value);
-    });
     const res = await this.request(this.hostExt + url, {
       queryParameters: {
         page: page ?? 0,
       },
     });
+    return res;
 
     const list = await this.querySelectorAll(res, "div.page-item-detail");
     const result = [];

@@ -153,7 +153,9 @@ class _ReadComicContentState extends State<ReadComicContent> {
                 controller: _scrollController,
                 child: BlocBuilder<ReadBookCubit, ReadBookState>(
                   builder: (context, state) {
-                    final headers = {"Referer": _readBookCubit.book.host};
+                    final headers = {
+                      "Referer": _readBookCubit.book.getSourceByBookUrl()
+                    };
                     return switch (_readBookCubit.bookType) {
                       BookType.comic => Column(
                           children: _chapter.content.map((src) {

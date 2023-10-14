@@ -5,8 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/constants/dimens.dart';
 import 'package:u_book/app/constants/gaps.dart';
 import 'package:u_book/app/extensions/extensions.dart';
-import 'package:u_book/app/routes/routes_name.dart';
-import 'package:u_book/data/models/extension.dart';
+import 'package:u_book/data/models/metadata.dart';
 import 'package:u_book/widgets/widgets.dart';
 import '../cubit/install_extension_cubit.dart';
 
@@ -33,7 +32,7 @@ class _InstallExtensionPageState extends State<InstallExtensionPage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: const Text("Tiện ích bổ sung"),
+          title: const Text("Tiện ích bổ mở rộng"),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(56),
             child: Container(
@@ -105,7 +104,7 @@ class _InstallExtensionPageState extends State<InstallExtensionPage> {
               children: exts
                   .map(
                     (ext) => _ExtensionCard(
-                      extension: ext,
+                      extension: ext.metadata,
                       installed: true,
                       onTap: () {
                         _installExtensionCubit.onUninstallExt(ext);
@@ -128,6 +127,8 @@ class _InstallExtensionPageState extends State<InstallExtensionPage> {
         }
         return ListView.builder(
           itemCount: exts.length,
+          padding:
+              const EdgeInsets.symmetric(horizontal: Dimens.horizontalPadding),
           itemBuilder: (context, index) {
             final ext = exts[index];
             return _ExtensionCard(
@@ -137,7 +138,8 @@ class _InstallExtensionPageState extends State<InstallExtensionPage> {
                 showModalBottomSheet(
                     context: context,
                     builder: (_) => const _DialogInstallExtension());
-                final install = await _installExtensionCubit.onInstallExt(ext);
+                final install =
+                    await _installExtensionCubit.onInstallExt(ext.path);
                 Navigator.pop(context);
               },
             );
@@ -154,7 +156,7 @@ class _ExtensionCard extends StatelessWidget {
       required this.extension,
       required this.onTap,
       this.installed = false});
-  final Extension extension;
+  final Metadata extension;
   final VoidCallback onTap;
   final bool installed;
 

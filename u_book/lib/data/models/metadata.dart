@@ -2,9 +2,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:u_book/data/models/extension.dart';
+import 'package:u_book/app/config/app_type.dart';
 
-// enum ExtensionType { novel, comic }
 
 class Metadata {
   String name;

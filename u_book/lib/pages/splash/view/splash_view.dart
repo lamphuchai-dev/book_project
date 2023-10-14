@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:u_book/di/components/service_locator.dart';
-import 'package:u_book/services/extensions_manager.dart';
+import 'package:u_book/services/extensions_service.dart';
 import '../cubit/splash_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'splash_page.dart';
@@ -12,7 +12,8 @@ class SplashView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SplashCubit(manager: getIt<ExtensionsManager>())..onInit(),
+      create: (context) =>
+          SplashCubit(extensionsService: getIt<ExtensionsService>())..onInit(),
       child: const SplashPage(),
     );
   }

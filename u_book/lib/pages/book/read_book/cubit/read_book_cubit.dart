@@ -1,16 +1,17 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_js/flutter_js.dart';
 import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/data/models/book.dart';
 import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/pages/book/read_book/read_book.dart';
 import 'package:u_book/pages/home/cubit/home_cubit.dart';
+import 'package:u_book/data/models/extension.dart';
+import 'package:u_book/services/extensions_service.dart';
+import 'package:u_book/services/js_runtime.dart';
 import 'package:u_book/services/database_service.dart';
-import 'package:u_book/services/extension_runtime.dart';
-import 'package:u_book/services/extensions_manager.dart';
+import 'package:u_book/utils/directory_utils.dart';
 import 'package:u_book/utils/logger.dart';
 import 'package:u_book/utils/system_utils.dart';
 part 'read_book_state.dart';
@@ -18,10 +19,12 @@ part 'read_book_state.dart';
 class ReadBookCubit extends Cubit<ReadBookState> {
   ReadBookCubit(
       {required ReadBookArgs readBookArgs,
-      required ExtensionsManager extensionsManager,
-      required DatabaseService databaseService})
+      required ExtensionsService extensionManager,
+      required DatabaseService databaseService,
+      required JsRuntime jsRuntime})
       : _readBookArgs = readBookArgs,
-        _extensionsManager = extensionsManager,
+        _jsRuntime = jsRuntime,
+        _extensionManager = extensionManager,
         _databaseService = databaseService,
         super(ReadBookInitial(
             totalChapters: readBookArgs.chapters.length,
@@ -30,11 +33,13 @@ class ReadBookCubit extends Cubit<ReadBookState> {
 
   Book get book => _readBookArgs.book;
 
-  late final ExtensionRunTime _extensionRunTime;
+  late final JsRuntime _jsRuntime;
 
   final ReadBookArgs _readBookArgs;
-  final ExtensionsManager _extensionsManager;
+  final ExtensionsService _extensionManager;
   final DatabaseService _databaseService;
+
+  Extension? _extensionModel;
   bool _currentOnTouchScreen = false;
 
   late final AnimationController _menuAnimationController;
@@ -49,7 +54,8 @@ class ReadBookCubit extends Cubit<ReadBookState> {
       ValueNotifier(null);
 
   void onInit() async {
-    final ext = await _extensionsManager.getExtensionRunTimeBySource(book.host);
+    final ext =
+        _extensionManager.getExtensionBySource(book.getSourceByBookUrl());
     if (ext == null) {
       emit(ReadBookInitial(
           totalChapters: _readBookArgs.chapters.length,
@@ -57,10 +63,13 @@ class ReadBookCubit extends Cubit<ReadBookState> {
       return;
     }
 
-    _extensionRunTime = ext;
+    _extensionModel = ext;
 
     if (_readBookArgs.fromBookmarks) {
-      final list = await _extensionRunTime.getChapters(book.bookUrl);
+      final list = await _jsRuntime.getChapters(
+          url: book.bookUrl,
+          jsScript: DirectoryUtils.getJsScriptByPath(
+              _extensionModel!.script.chapters));
       chapters = list;
 
       final initReadChapter = chapters
@@ -87,7 +96,10 @@ class ReadBookCubit extends Cubit<ReadBookState> {
       final content = chapters.firstWhereOrNull(
           (item) => item.index == chapter.index && item.content.isNotEmpty);
       if (content != null) return content;
-      List<String> result = await _extensionRunTime.chapter(chapter.url);
+      List<String> result = await _jsRuntime.chapter(
+          url: chapter.url,
+          jsScript: DirectoryUtils.getJsScriptByPath(
+              _extensionModel!.script.chapter));
       chapter = chapter.copyWith(content: result);
       chapters = chapters
           .map((element) => element.index == chapter.index ? chapter : element)

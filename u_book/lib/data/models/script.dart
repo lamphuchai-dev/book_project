@@ -2,17 +2,17 @@
 import 'dart:convert';
 
 class Script {
-  String? home;
-  String? detail;
-  String? chapters;
-  String? chapter;
+  String home;
+  String detail;
+  String chapters;
+  String chapter;
   String? search;
   String? genre;
   Script({
-    this.home,
-    this.detail,
-    this.chapters,
-    this.chapter,
+    required this.home,
+    required this.detail,
+    required this.chapters,
+    required this.chapter,
     this.search,
     this.genre,
   });
@@ -48,12 +48,12 @@ class Script {
 
   factory Script.fromMap(Map<String, dynamic> map) {
     return Script(
-      home: map['home'] != null ? map['home'] as String : null,
-      detail: map['detail'] != null ? map['detail'] as String : null,
-      chapters: map['chapters'] != null ? map['chapters'] as String : null,
-      chapter: map['chapter'] != null ? map['chapter'] as String : null,
-      search: map['search'] != null ? map['search'] as String : null,
-      genre: map['genre'] != null ? map['genre'] as String : null,
+      home: map['home'],
+      detail: map['detail'],
+      chapters: map['chapters'],
+      chapter: map['chapter'],
+      search: map['search'],
+      genre: map['genre'],
     );
   }
 

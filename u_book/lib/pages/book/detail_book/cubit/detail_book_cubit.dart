@@ -4,8 +4,11 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/data/models/book.dart';
+import 'package:u_book/data/models/extension.dart';
+import 'package:u_book/services/extensions_service.dart';
+import 'package:u_book/services/js_runtime.dart';
 import 'package:u_book/services/database_service.dart';
-import 'package:u_book/services/extension_runtime.dart';
+import 'package:u_book/utils/directory_utils.dart';
 import 'package:u_book/utils/logger.dart';
 
 part 'detail_book_state.dart';
@@ -13,17 +16,19 @@ part 'detail_book_state.dart';
 class DetailBookCubit extends Cubit<DetailBookState> {
   DetailBookCubit(
       {required Book book,
-      required  this.extensionRunTime,
-      required DatabaseService databaseService})
+      required ExtensionsService extensionManager,
+      required DatabaseService databaseService,
+      required this.extensionModel})
       : _databaseService = databaseService,
-        
+        _jsRuntime = extensionManager.jsRuntime,
         super(DetailBookState(
             book: book, statusType: StatusType.init, isBookmark: false));
 
   final _logger = Logger("DetailBookCubit");
 
-  final ExtensionRunTime extensionRunTime;
   final DatabaseService _databaseService;
+  final Extension extensionModel;
+  final JsRuntime _jsRuntime;
   int? _idBook;
   void onInit() async {
     await Future.wait([getDetailBook(), getBookInBookmarks()]);
@@ -32,7 +37,11 @@ class DetailBookCubit extends Cubit<DetailBookState> {
   Future<void> getDetailBook() async {
     try {
       emit(state.copyWith(statusType: StatusType.loading));
-      final result = await extensionRunTime.detail(state.book.bookUrl);
+      final result = await _jsRuntime.detail(
+          url: state.book.bookUrl,
+          jsScript:
+              DirectoryUtils.getJsScriptByPath(extensionModel.script.detail),
+          extType: extensionModel.metadata.type);
       emit(state.copyWith(book: result, statusType: StatusType.loaded));
     } catch (error) {
       _logger.error(error, name: "onInit");
@@ -50,7 +59,7 @@ class DetailBookCubit extends Cubit<DetailBookState> {
 
   void actionBookmark() async {
     if (state.isBookmark) {
-      final isDelete = await _databaseService.deleteExtension(_idBook!);
+      final isDelete = await _databaseService.onDeleteBook(_idBook!);
       if (isDelete) {
         emit(state.copyWith(isBookmark: false));
       }

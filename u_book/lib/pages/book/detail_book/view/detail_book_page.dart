@@ -213,8 +213,8 @@ class _DetailBookPageState extends State<DetailBookPage> {
                         Navigator.pushNamed(context, RoutesName.chaptersBook,
                             arguments: ChaptersBookArgs(
                                 book: _detailBookCubit.state.book,
-                                extensionRunTime:
-                                    _detailBookCubit.extensionRunTime));
+                                extensionModel:
+                                    _detailBookCubit.extensionModel));
                       },
                       child: Container(
                         decoration: BoxDecoration(

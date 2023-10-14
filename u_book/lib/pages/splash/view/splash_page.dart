@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/app/constants/assets.dart';
 import 'package:u_book/app/routes/routes_name.dart';
-import 'package:u_book/di/components/service_locator.dart';
-import 'package:u_book/pages/splash/view/tes_ui.dart';
-import 'package:u_book/services/database_service.dart';
 import 'package:u_book/widgets/widgets.dart';
 import '../cubit/splash_cubit.dart';
-import 'exts_widget.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -27,8 +22,6 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    // return ExtsWidget();
-    // return TestUi();
     return Scaffold(
       body: BlocListener<SplashCubit, SplashState>(
         listenWhen: (previous, current) => previous != current,

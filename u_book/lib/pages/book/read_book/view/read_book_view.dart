@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/data/models/book.dart';
 import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/di/components/service_locator.dart';
+import 'package:u_book/services/extensions_service.dart';
 import 'package:u_book/services/database_service.dart';
-import 'package:u_book/services/extensions_manager.dart';
+import 'package:u_book/services/extensions_service.dart';
 
 import '../cubit/read_book_cubit.dart';
 import 'read_book_page.dart';
@@ -31,8 +32,9 @@ class ReadBookView extends StatelessWidget {
           // book: readBookArgs.book,
           // chapter: readBookArgs.chapter,
           // chapters: readBookArgs.chapters,
-          // extensionRunTime: getIt<ExtensionsManager>().runTimePrimary!
-          extensionsManager: getIt<ExtensionsManager>(),
+          // extensionJsRuntime: getIt<ExtensionsManager>().runTimePrimary!
+          jsRuntime: getIt<ExtensionsService>().jsRuntime,
+          extensionManager: getIt<ExtensionsService>(),
           readBookArgs: readBookArgs,
           databaseService: getIt<DatabaseService>())
         ..onInit(),

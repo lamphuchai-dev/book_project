@@ -30,7 +30,6 @@ class _ListChaptersWidgetState extends State<ListChaptersWidget> {
       }
     });
 
-    print("object");
     super.initState();
   }
 

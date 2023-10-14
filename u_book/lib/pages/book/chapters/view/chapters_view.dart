@@ -1,12 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:u_book/data/models/book.dart';
+import 'package:u_book/data/models/extension.dart';
 import 'package:u_book/di/components/service_locator.dart';
-import 'package:u_book/services/extension_runtime.dart';
-import 'package:u_book/services/extensions_manager.dart';
+import 'package:u_book/services/extensions_service.dart';
 
 import '../cubit/chapters_cubit.dart';
+
 import 'chapters_page.dart';
 
 class ChaptersView extends StatelessWidget {
@@ -17,7 +20,9 @@ class ChaptersView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ChaptersCubit(
-          book: args.book, extensionRunTime: args.extensionRunTime)
+          book: args.book,
+          extensionModel: args.extensionModel,
+          jsRuntime: getIt<ExtensionsService>().jsRuntime)
         ..onInit(),
       child: const ChaptersPage(),
     );
@@ -26,9 +31,9 @@ class ChaptersView extends StatelessWidget {
 
 class ChaptersBookArgs {
   final Book book;
-  final ExtensionRunTime extensionRunTime;
+  final Extension extensionModel;
   ChaptersBookArgs({
     required this.book,
-    required this.extensionRunTime,
+    required this.extensionModel,
   });
 }

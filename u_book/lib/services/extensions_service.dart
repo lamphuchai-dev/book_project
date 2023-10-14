@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,36 +6,49 @@ import 'package:archive/archive_io.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_client/index.dart';
 import 'package:u_book/app/extensions/extensions.dart';
-import 'package:u_book/pages/splash/view/extension/extension_model.dart';
-import 'package:u_book/pages/splash/view/extension/metadata.dart';
-import 'package:u_book/pages/splash/view/extension/script.dart';
+import 'package:u_book/data/models/extension.dart';
+import 'package:u_book/data/models/metadata.dart';
+import 'package:u_book/data/models/script.dart';
+import 'package:u_book/services/js_runtime.dart';
 import 'package:u_book/utils/directory_utils.dart';
 import 'package:u_book/utils/logger.dart';
 
-class ExtensionManager {
+class ExtensionsService {
   final _logger = Logger('ExtensionsManager');
-  List<ExtensionModel> _exts = [];
+  List<Extension> _exts = [];
   final DioClient _dioClient = DioClient();
 
-  List<ExtensionModel> get getExtensions => _exts;
+  List<Extension> get getExtensions => _exts;
+  late final JsRuntime _runTime;
+
+  JsRuntime get jsRuntime => _runTime;
+
+  final StreamController<List<Extension>> _extensionStreamController =
+      StreamController<List<Extension>>.broadcast();
+
+  Stream<List<Extension>> get extensionsChange =>
+      _extensionStreamController.stream;
 
   Future<void> onInit() async {
+    _runTime = JsRuntime();
+    _runTime.initRuntime();
     await loadLocalExtension();
   }
 
   Future<void> loadLocalExtension() async {
     final dir = await DirectoryUtils.getListFileExt();
-    List<ExtensionModel> exts = [];
+    List<Extension> exts = [];
     for (var item in dir) {
       final extFile = File("${item.path}/extension.json");
-      final ext = ExtensionModel.fromJson(extFile.readAsStringSync());
+      final ext = Extension.fromJson(extFile.readAsStringSync());
       exts.add(ext);
     }
     _logger.log("exts = ${exts.length}", name: "loadLocalExtension");
     _exts = exts;
+    _extensionStreamController.add(_exts);
   }
 
-  Future<ExtensionModel?> installExtensionByUrl(String url) async {
+  Future<Extension?> installExtensionByUrl(String url) async {
     try {
       final res = await _dioClient.get(url,
           options: Options(responseType: ResponseType.bytes));
@@ -44,9 +58,9 @@ class ExtensionManager {
             .firstWhereOrNull((item) => item.name == "extension.json");
         if (fileExt != null) {
           final contentString = utf8.decode(fileExt.content as List<int>);
-          ExtensionModel ext = ExtensionModel.fromJson(contentString);
+          Extension ext = Extension.fromJson(contentString);
           final path = await DirectoryUtils.getDirectoryExtensions;
-          Script script = Script();
+          Script script = ext.script;
           final pathExt = "$path/${ext.metadata.slug}";
           for (final file in archive) {
             final filename = file.name;
@@ -79,6 +93,9 @@ class ExtensionManager {
           File("$pathExt/$fileExt")
             ..createSync(recursive: true)
             ..writeAsBytesSync(utf8.encode(ext.toJson()));
+          _logger.log("install done");
+          _exts.add(ext);
+          _extensionStreamController.add(_exts);
           return ext;
         }
       }
@@ -88,11 +105,17 @@ class ExtensionManager {
     return null;
   }
 
-  Future<bool> uninstallExtension(ExtensionModel extensionModel) async {
+  Future<bool> uninstallExtension(Extension extensionModel) async {
     final dirExt =
         DirectoryUtils.getDirectoryByPath(extensionModel.metadata.localPath);
     if (dirExt.existsSync()) {
-      dirExt.deleteSync();
+      dirExt.deleteSync(recursive: true);
+      final exts = _exts
+          .where(
+              (item) => item.metadata.source != extensionModel.metadata.source)
+          .toList();
+      _exts = exts;
+      _extensionStreamController.add(_exts);
       return true;
     }
     return false;
@@ -109,5 +132,13 @@ class ExtensionManager {
     } catch (error) {
       return [];
     }
+  }
+
+  Extension? getExtensionBySource(String source) {
+    return _exts.firstWhereOrNull((elm) => elm.metadata.source == source);
+  }
+
+  close() {
+    _extensionStreamController.close();
   }
 }

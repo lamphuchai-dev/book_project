@@ -37,7 +37,9 @@ class DirectoryUtils {
 
   static String getJsScriptByPath(String path) {
     try {
-      return File(path).readAsStringSync();
+      final file = File(path);
+      print(file.existsSync());
+      return file.readAsStringSync();
     } catch (error) {
       rethrow;
     }

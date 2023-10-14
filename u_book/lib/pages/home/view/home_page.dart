@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:u_book/app/constants/gaps.dart';
-import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/app/routes/routes_name.dart';
+import 'package:u_book/data/models/extension.dart';
 import 'package:u_book/pages/book/detail_book/detail_book.dart';
 import 'package:u_book/pages/home/widgets/widgets.dart';
-import 'package:u_book/pages/splash/view/extension/extension_model.dart';
 import 'package:u_book/widgets/widgets.dart';
+
 import '../cubit/home_cubit.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,12 +28,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = context.colorScheme;
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         Widget body = const SizedBox();
         Widget title = const SizedBox();
-        bool enableSearch = false;
+        List<Widget>? actions = [];
         if (state is LoadingExtensionState || state is HomeStateInitial) {
           body = const LoadingWidget();
         } else if (state is ExtensionNoInstallState) {
@@ -58,12 +59,24 @@ class _HomePageState extends State<HomePage> {
           title = const Text("Tiện ích");
         } else if (state is LoadedExtensionState) {
           body = _extReady(state.extension);
-          enableSearch = true;
+          actions = [
+            IconButton(
+                onPressed: () {
+                  showSearch(
+                      context: context,
+                      delegate: SearchBookDelegate(
+                          onSearchBook: _homeCubit.onSearchBook,
+                          extensionModel: state.extension));
+                },
+                icon: const Icon(Icons.search_rounded))
+          ];
           title = GestureDetector(
             onTap: () {
               showModalBottomSheet(
+                elevation: 0,
                 context: context,
-                backgroundColor: context.colorScheme.background,
+                backgroundColor: Colors.transparent,
+                clipBehavior: Clip.hardEdge,
                 builder: (context) => SelectExtensionBottomSheet(
                   extensions: _homeCubit.extensionManager.getExtensions,
                   exceptionPrimary: state.extension,
@@ -91,26 +104,14 @@ class _HomePageState extends State<HomePage> {
             appBar: AppBar(
               centerTitle: false,
               title: title,
-              actions: enableSearch
-                  ? [
-                      IconButton(
-                          onPressed: () {
-                            showSearch(
-                                context: context,
-                                delegate: SearchBookDelegate(
-                                    onSearchBook: _homeCubit.onSearchBook,
-                                    extensionRunTime: _homeCubit.extRuntime!));
-                          },
-                          icon: const Icon(Icons.search_rounded))
-                    ]
-                  : [],
+              actions: actions,
             ),
             body: body);
       },
     );
   }
 
-  Widget _extReady(ExtensionModel extension) {
+  Widget _extReady(Extension extension) {
     final tabItems = extension.metadata.tabsHome
         .map(
           (e) => Tab(
@@ -127,8 +128,8 @@ class _HomePageState extends State<HomePage> {
               },
               onTap: (book) {
                 Navigator.pushNamed(context, RoutesName.detailBook,
-                    arguments: DetailBookArgs(
-                        book: book, extensionRunTime: _homeCubit.extRuntime!));
+                    arguments:
+                        DetailBookArgs(book: book, extensionModel: extension));
               },
             ),
           ),

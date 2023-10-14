@@ -4,7 +4,7 @@ import 'package:u_book/app/extensions/context_extension.dart';
 import 'package:u_book/app/routes/routes_name.dart';
 import 'package:u_book/data/models/book.dart';
 import 'package:u_book/pages/book/detail_book/detail_book.dart';
-import 'package:u_book/services/extension_runtime.dart';
+import 'package:u_book/data/models/extension.dart';
 
 import '../../../widgets/book/books_grid_widget.dart';
 
@@ -12,9 +12,9 @@ typedef OnSearchBook = Future<List<Book>> Function(String keyWord, int page);
 
 class SearchBookDelegate extends SearchDelegate {
   final OnSearchBook onSearchBook;
-  final ExtensionRunTime extensionRunTime;
+  final Extension extensionModel;
   SearchBookDelegate(
-      {required this.onSearchBook, required this.extensionRunTime});
+      {required this.onSearchBook, required this.extensionModel});
 
   List<Book> _listBook = [];
 
@@ -68,7 +68,7 @@ class SearchBookDelegate extends SearchDelegate {
       onTap: (book) {
         Navigator.pushNamed(context, RoutesName.detailBook,
             arguments:
-                DetailBookArgs(book: book, extensionRunTime: extensionRunTime));
+                DetailBookArgs(book: book, extensionModel: extensionModel));
       },
     );
   }

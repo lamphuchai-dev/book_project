@@ -9,6 +9,7 @@
 import 'dart:convert';
 
 import 'package:isar/isar.dart';
+import 'package:u_book/app/config/app_type.dart';
 
 import 'package:u_book/data/models/extension.dart';
 
@@ -122,7 +123,6 @@ class Book {
       ExtensionType.novel => Book.fromMapNovel(map),
     };
   }
-
   String toJson() => json.encode(toMap());
 
   factory Book.fromJson(String source) =>
@@ -131,5 +131,10 @@ class Book {
   @override
   String toString() {
     return 'Book(id: $id, name: $name, bookUrl: $bookUrl, author: $author, description: $description, cover: $cover, host: $host, totalChapter: $totalChapter, type: $type, bookmark: $bookmark, currentReadChapter: $currentReadChapter, updateAt: $updateAt)';
+  }
+
+  String getSourceByBookUrl() {
+    final uri = Uri.parse(bookUrl);
+    return "${uri.scheme}://${uri.host}";
   }
 }
