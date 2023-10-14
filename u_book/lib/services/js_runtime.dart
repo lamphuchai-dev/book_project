@@ -71,6 +71,7 @@ class JsRuntime {
         final content = args[0];
         final selector = args[1];
         final doc = parse(content).querySelectorAll(selector);
+        if (doc.isEmpty) return [];
         final elements = jsonEncode(doc.map((e) {
           return e.outerHtml;
         }).toList());
@@ -95,6 +96,18 @@ class JsRuntime {
         default:
           return doc?.outerHtml ?? '';
       }
+    });
+
+    runtime.onMessage('getElementsByClassName', (dynamic args) async {
+      final content = args[0];
+      final className = args[1];
+      final doc = parse(content).getElementsByClassName(className);
+      if (doc.isEmpty) return [];
+      final elements = jsonEncode(doc.map((e) {
+        return e.outerHtml;
+      }).toList());
+
+      return elements;
     });
 
     runtime.onMessage('queryXPath', (args) {
@@ -239,6 +252,7 @@ class JsRuntime {
 
   String _baseJs() {
     return '''
+
 class Element {
   constructor(content, selector) {
     this.content = content;
@@ -336,14 +350,46 @@ class Extension {
     return new XPathNode(content, selector);
   }
   static async querySelectorAll(content, selector) {
-    let elements = [];
-    JSON.parse(
-      await sendMessage("querySelectorAll", JSON.stringify([content, selector]))
-    ).forEach((e) => {
-      elements.push(new Element(e, selector));
-    });
-    return elements;
+    try {
+      let elements = [];
+      JSON.parse(
+        await sendMessage(
+          "querySelectorAll",
+          JSON.stringify([content, selector])
+        )
+      ).forEach((e) => {
+        elements.push(new Element(e, selector));
+      });
+      return elements;
+    } catch (e) {
+      return [];
+    }
   }
+
+  static async getElementsByClassName(content, selector) {
+    try {
+      let elements = [];
+      JSON.parse(
+        await sendMessage(
+          "getElementsByClassName",
+          JSON.stringify([content, selector])
+        )
+      ).forEach((e) => {
+        elements.push(new Element(e, selector));
+      });
+      return elements;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static async getElementById(content, selector, attr) {
+    return await sendMessage(
+      "getElementById",
+      JSON.stringify([content, selector, attr])
+    );
+  }
+
   static async getAttributeText(content, selector, attr) {
     return await sendMessage(
       "getAttributeText",
@@ -363,6 +409,12 @@ async function stringify(callback) {
   const data = await callback();
   return typeof data === "object" ? JSON.stringify(data) : data;
 }
+
+async function runFn(callback) {
+  const data = await callback();
+  return typeof data === "object" ? JSON.stringify(data) : data;
+}
+
 
 ''';
   }

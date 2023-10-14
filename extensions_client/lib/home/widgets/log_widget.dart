@@ -15,22 +15,33 @@ class LogWidget extends StatelessWidget {
       buildWhen: (previous, current) => previous.log != current.log,
       builder: (context, state) {
         if (state.log == "") return const SizedBox();
-
-        return JsonConfig(
-          data: JsonConfigData(
-            animation: true,
-            animationDuration: const Duration(milliseconds: 300),
-            animationCurve: Curves.ease,
-            itemPadding: const EdgeInsets.only(left: 8),
-            color: const JsonColorScheme(
-                // stringColor: Colors.grey,
-                ),
-            style: const JsonStyleScheme(
-              arrow: Icon(Icons.arrow_right),
+        try {
+          // final json = jsonDecode(state.log);
+          // if (json.runtimeType.toString() == "String") {
+          //   return SingleChildScrollView(
+          //     child: Text(json),
+          //   );
+          // }
+          return JsonConfig(
+            data: JsonConfigData(
+              animation: true,
+              animationDuration: const Duration(milliseconds: 300),
+              animationCurve: Curves.ease,
+              itemPadding: const EdgeInsets.only(left: 8),
+              color: const JsonColorScheme(
+                  // stringColor: Colors.grey,
+                  ),
+              style: const JsonStyleScheme(
+                arrow: Icon(Icons.arrow_right),
+              ),
             ),
-          ),
-          child: JsonView(json: state.log),
-        );
+            child: JsonView(json: state.log),
+          );
+        } catch (error) {
+          return SingleChildScrollView(
+            child: Text(state.log.toString()),
+          );
+        }
       },
     );
   }

@@ -16,11 +16,13 @@ class ResultWidget extends StatelessWidget {
       builder: (context, state) {
         if (state.result == "") return const SizedBox();
         try {
-          final json = jsonDecode(state.result);
+          dynamic json = jsonDecode(state.result);
           if (json.runtimeType.toString() == "String") {
             return SingleChildScrollView(
               child: Text(json),
             );
+          } else if (json is List && json.isEmpty) {
+            return const Text("[]");
           }
           return JsonConfig(
             data: JsonConfigData(
