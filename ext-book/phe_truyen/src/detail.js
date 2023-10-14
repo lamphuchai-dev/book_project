@@ -13,13 +13,17 @@ async function detail(bookUrl) {
   );
 
   const authorRow = await Extension.querySelectorAll(detailBook, "li.author p");
+  var author = "";
+  if (authorRow.length == 2) {
+    author = await Extension.querySelector(authorRow[1].content, "p").text;
+  }
 
   const statusRow = await Extension.querySelectorAll(detailBook, "li.status p");
 
-  const author = await Extension.querySelector(authorRow[1].content, "p").text;
-
-  const bookStatus = await Extension.querySelector(statusRow[1].content, "p")
-    .text;
+  var bookStatus = "";
+  if (statusRow.length == 2) {
+    bookStatus = await Extension.querySelector(statusRow[1].content, "p").text;
+  }
 
   const description = await Extension.querySelector(
     detailBook,
