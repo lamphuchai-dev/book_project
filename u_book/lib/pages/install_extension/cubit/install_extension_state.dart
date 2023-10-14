@@ -7,7 +7,7 @@ class InstallExtensionState extends Equatable {
       required this.notInstalledExts,
       required this.statusType});
   final List<Extension> installedExts;
-  final List<Extension> notInstalledExts;
+  final List<Metadata> notInstalledExts;
   final StatusType statusType;
 
   @override
@@ -15,7 +15,7 @@ class InstallExtensionState extends Equatable {
 
   InstallExtensionState copyWith({
     List<Extension>? installedExts,
-    List<Extension>? notInstalledExts,
+    List<Metadata>? notInstalledExts,
     StatusType? statusType,
   }) {
     return InstallExtensionState(

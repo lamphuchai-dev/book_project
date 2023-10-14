@@ -6,6 +6,7 @@ import 'package:u_book/app/constants/dimens.dart';
 import 'package:u_book/app/constants/gaps.dart';
 import 'package:u_book/app/extensions/context_extension.dart';
 import 'package:u_book/app/routes/routes_name.dart';
+import 'package:u_book/pages/book/chapters/chapters.dart';
 import 'package:u_book/widgets/cache_network_image.dart';
 import 'package:u_book/widgets/widgets.dart';
 import '../cubit/detail_book_cubit.dart';
@@ -210,7 +211,10 @@ class _DetailBookPageState extends State<DetailBookPage> {
                         child: GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, RoutesName.chaptersBook,
-                            arguments: _detailBookCubit.state.book);
+                            arguments: ChaptersBookArgs(
+                                book: _detailBookCubit.state.book,
+                                extensionModel:
+                                    _detailBookCubit.extensionModel));
                       },
                       child: Container(
                         decoration: BoxDecoration(

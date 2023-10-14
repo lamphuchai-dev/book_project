@@ -160,7 +160,9 @@ class _ChapterContentState extends State<ChapterContent> {
                 controller: _scrollController,
                 child: BlocBuilder<ReadBookCubit, ReadBookState>(
                   builder: (context, state) {
-                    // final headers = {"Referer": _readBookCubit.book.host};
+                    final headers = {
+                      "Referer": _readBookCubit.book.getSourceByBookUrl()
+                    };
                     return switch (_readBookCubit.bookType) {
                       BookType.comic => Column(
                           children: _chapter.content
@@ -168,7 +170,7 @@ class _ChapterContentState extends State<ChapterContent> {
                                     e,
                                     fit: BoxFit.fitWidth,
                                     width: width,
-                                    // headers: headers,
+                                    headers: headers,
                                     placeholder: Container(
                                         height: 200,
                                         alignment: Alignment.center,

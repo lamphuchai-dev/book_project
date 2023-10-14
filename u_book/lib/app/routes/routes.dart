@@ -33,20 +33,21 @@ class Routes {
             type: PageTransitionType.rightToLeft);
 
       case RoutesName.detailBook:
-        assert(args != null && args is Book, "args must be Book");
+        assert(args != null && args is DetailBookArgs,
+            "args must be DetailBookArgs");
         return PageTransition(
             settings: settings,
             child: DetailBookView(
-              book: args as Book,
+              args: args as DetailBookArgs,
             ),
             type: PageTransitionType.rightToLeft);
 
       case RoutesName.chaptersBook:
-        assert(args != null && args is Book, "args must be Book");
+        assert(args != null && args is ChaptersBookArgs, "args must be Book");
         return PageTransition(
             settings: settings,
             child: ChaptersView(
-              book: args as Book,
+              args: args as ChaptersBookArgs,
             ),
             type: PageTransitionType.rightToLeft);
 

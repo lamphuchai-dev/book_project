@@ -36,7 +36,7 @@ class BooksGridWidget extends StatefulWidget {
 }
 
 class _BooksGridWidgetState extends State<BooksGridWidget> {
-  int _page = 0;
+  int _page = 1;
   List<Book> _listBook = [];
   bool _isLoading = false;
 
@@ -68,7 +68,7 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
     setState(() {
       _isLoading = true;
     });
-    _page = 0;
+    _page = 1;
     _listBook = await widget.onFetchListBook!.call(_page);
     widget.onChangeBooks?.call(_listBook);
     setState(() {

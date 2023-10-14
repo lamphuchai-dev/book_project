@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:u_book/app/constants/gaps.dart';
-import 'package:u_book/app/extensions/context_extension.dart';
 import 'package:u_book/app/routes/routes_name.dart';
 import 'package:u_book/data/models/extension.dart';
-import 'package:u_book/di/components/service_locator.dart';
+import 'package:u_book/pages/book/detail_book/detail_book.dart';
 import 'package:u_book/pages/home/widgets/widgets.dart';
-import 'package:u_book/services/extensions_manager.dart';
 import 'package:u_book/widgets/widgets.dart';
+
 import '../cubit/home_cubit.dart';
 
 class HomePage extends StatefulWidget {
@@ -31,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, state) {
         Widget body = const SizedBox();
         Widget title = const SizedBox();
-        bool enableSearch = false;
+        List<Widget>? actions = [];
         if (state is LoadingExtensionState || state is HomeStateInitial) {
           body = const LoadingWidget();
         } else if (state is ExtensionNoInstallState) {
@@ -58,14 +59,26 @@ class _HomePageState extends State<HomePage> {
           title = const Text("Tiện ích");
         } else if (state is LoadedExtensionState) {
           body = _extReady(state.extension);
-          enableSearch = true;
+          actions = [
+            IconButton(
+                onPressed: () {
+                  showSearch(
+                      context: context,
+                      delegate: SearchBookDelegate(
+                          onSearchBook: _homeCubit.onSearchBook,
+                          extensionModel: state.extension));
+                },
+                icon: const Icon(Icons.search_rounded))
+          ];
           title = GestureDetector(
             onTap: () {
               showModalBottomSheet(
+                elevation: 0,
                 context: context,
-                backgroundColor: context.colorScheme.background,
+                backgroundColor: Colors.transparent,
+                clipBehavior: Clip.hardEdge,
                 builder: (context) => SelectExtensionBottomSheet(
-                  extensions: getIt<ExtensionsManager>().getExtensions,
+                  extensions: _homeCubit.extensionManager.getExtensions,
                   exceptionPrimary: state.extension,
                   onSelected: (ext) {
                     _homeCubit.onChangeExtensions(ext);
@@ -76,7 +89,7 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(child: Text(state.extension.name)),
+                Flexible(child: Text(state.extension.metadata.name)),
                 Gaps.wGap8,
                 const Icon(
                   Icons.expand_more_rounded,
@@ -91,19 +104,7 @@ class _HomePageState extends State<HomePage> {
             appBar: AppBar(
               centerTitle: false,
               title: title,
-              actions: enableSearch
-                  ? [
-                      IconButton(
-                          onPressed: () {
-                            showSearch(
-                                context: context,
-                                delegate: SearchBookDelegate(
-                                  onSearchBook: _homeCubit.onSearchBook,
-                                ));
-                          },
-                          icon: const Icon(Icons.search_rounded))
-                    ]
-                  : [],
+              actions: actions,
             ),
             body: body);
       },
@@ -111,30 +112,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _extReady(Extension extension) {
-    final tabItems = extension.tabsHome
+    final tabItems = extension.metadata.tabsHome
         .map(
           (e) => Tab(
             text: e.title,
           ),
         )
         .toList();
-    final tabChildren = extension.tabsHome
+    final tabChildren = extension.metadata.tabsHome
         .map(
           (tabHome) => KeepAliveWidget(
             child: BooksGridWidget(
               onFetchListBook: (page) {
-                return _homeCubit.onGetListBook(tabHome.url!, page);
+                return _homeCubit.onGetListBook(tabHome.url, page);
               },
               onTap: (book) {
                 Navigator.pushNamed(context, RoutesName.detailBook,
-                    arguments: book);
+                    arguments:
+                        DetailBookArgs(book: book, extensionModel: extension));
               },
             ),
           ),
         )
         .toList();
     return DefaultTabController(
-      length: extension.tabsHome.length,
+      length: extension.metadata.tabsHome.length,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

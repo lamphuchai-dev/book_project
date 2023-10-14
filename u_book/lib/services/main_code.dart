@@ -180,6 +180,7 @@ export default class extends Extension {
     const list = await this.querySelectorAll(res, "div.items div.item");
     const result = [];
 
+
     for (const item of list) {
       const html = item.content;
       var cover = await this.getAttributeText(html, "img", "data-original");

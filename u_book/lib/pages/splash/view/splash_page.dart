@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:u_book/app/config/app_type.dart';
 import 'package:u_book/app/constants/assets.dart';
 import 'package:u_book/app/routes/routes_name.dart';
-import 'package:u_book/di/components/service_locator.dart';
-import 'package:u_book/services/database_service.dart';
 import 'package:u_book/widgets/widgets.dart';
 import '../cubit/splash_cubit.dart';
 
@@ -22,8 +19,6 @@ class _SplashPageState extends State<SplashPage> {
     _splashCubit = context.read<SplashCubit>();
     super.initState();
   }
-
-  final db = getIt<DatabaseService>();
 
   @override
   Widget build(BuildContext context) {
