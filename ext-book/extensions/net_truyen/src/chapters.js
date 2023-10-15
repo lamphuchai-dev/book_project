@@ -11,14 +11,10 @@ async function chapters(bookUrl) {
       title,
       url,
       bookUrl,
-      index: listEl.length - index,
+      index: listEl.length - 1 - index,
     });
   }
   return chapters;
 }
 
-
-
-[].forEach((el)=>{
-  
-})
+[].forEach((el) => {});
