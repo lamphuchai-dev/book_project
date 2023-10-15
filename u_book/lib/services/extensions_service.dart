@@ -55,7 +55,7 @@ class ExtensionsService {
       if (res is List<int>) {
         final archive = ZipDecoder().decodeBytes(res);
         final fileExt = archive.files
-            .firstWhereOrNull((item) => item.name == "extension.json");
+            .firstWhereOrNull((item) => item.name.contains("extension.json"));
         if (fileExt != null) {
           final contentString = utf8.decode(fileExt.content as List<int>);
           Extension ext = Extension.fromJson(contentString);

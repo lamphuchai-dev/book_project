@@ -24,14 +24,19 @@ try {
     .filter((item) => item.isDirectory());
 
   directories.forEach((extFolder) => {
+    const pathFolderExt = `${extFolder.path}/${extFolder.name}`;
+    const files = fs.readdirSync(pathFolderExt);
     const zip = new AdmZip();
-    const extPath = extFolder.path + "/" + extFolder.name + "/";
-    console.log(extPath);
-    const zipPath = extPath + "/extension.zip";
-    // Đọc nội dung của thư mục và thêm vào tệp zip
-    zip.addLocalFolder(extPath, path.basename(extPath));
-    // Lưu tệp zip
-    zip.writeZip(zipPath);
+    files.forEach((file) => {
+      const filePath = `${pathFolderExt}/${file}`;
+
+      if (fs.lstatSync(filePath).isDirectory()) {
+        zip.addLocalFolder(filePath, file);
+      } else {
+        zip.addLocalFile(filePath);
+      }
+    });
+    zip.writeZip(`${pathFolderExt}/extension.zip`);
   });
 } catch (err) {
   console.error("Lỗi khi đọc thư mục:", err);
