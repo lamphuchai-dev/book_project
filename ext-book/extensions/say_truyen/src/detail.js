@@ -1,5 +1,5 @@
-async function detail(url) {
-  const res = await Extension.request(url);
+async function detail(bookUrl) {
+  const res = await Extension.request(bookUrl);
   const detailEl = await Extension.querySelector(res, "div.site-content");
   const name = await Extension.querySelector(
     detailEl.content,
@@ -11,14 +11,42 @@ async function detail(url) {
     "div.summary_image img",
     "src"
   );
-  const authorRow = await Extension.querySelectorAll(
+  const lstElm = await Extension.querySelectorAll(
     detailEl.content,
     "div.post-content_item"
   );
-  const author = await Extension.querySelector(
-    authorRow[1].content,
-    "div.summary-content"
-  ).text;
+  var author = "";
+  var statusBook = "";
+
+  let genres = [];
+
+  const genresEl = await Extension.querySelectorAll(
+    detailEl.content,
+    "div.genres-content a"
+  );
+
+  for (var el of genresEl) {
+    genres.push({
+      url: await Extension.getAttributeText(el.content, "a", "href"),
+      title: await Extension.querySelector(el.content, "a").text,
+    });
+  }
+
+  if (lstElm.length == 6) {
+    author = await Extension.querySelector(
+      lstElm[1].content,
+      "div.summary-content"
+    ).text;
+    statusBook = await Extension.querySelector(
+      lstElm[4].content,
+      "div.summary-content"
+    ).text;
+    statusBook = statusBook
+      .replace("                        ", "")
+      .replace("                    ", "")
+      .replace(/\n/g, "");
+  }
+
   const description = await Extension.querySelector(
     detailEl.content,
     "div.description-summary p"
@@ -27,8 +55,10 @@ async function detail(url) {
   return {
     name,
     cover,
-    bookUrl: url,
+    bookUrl,
+    statusBook,
     author,
     description,
+    genres,
   };
 }

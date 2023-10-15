@@ -46,16 +46,16 @@ async function detail(bookUrl) {
     await Extension.querySelectorAll(res, "div.list-chapter ul a")
   ).length;
 
-  let listGenre = [];
-  const lstGenreEl = await Extension.querySelectorAll(
+  let genres = [];
+  const genresEl = await Extension.querySelectorAll(
     detailEl.content,
     "li.kind.row p"
   );
 
-  if (lstGenreEl.length == 2) {
-    const lstElm = await Extension.querySelectorAll(lstGenreEl[1].content, "a");
+  if (genresEl.length == 2) {
+    const lstElm = await Extension.querySelectorAll(genresEl[1].content, "a");
     for (var el of lstElm) {
-      listGenre.push({
+      genres.push({
         url: await Extension.getAttributeText(el.content, "a", "href"),
         title: await Extension.querySelector(el.content, "a").text,
       });
@@ -70,6 +70,6 @@ async function detail(bookUrl) {
     author,
     description,
     totalChapters,
-    listGenre,
+    genres,
   };
 }

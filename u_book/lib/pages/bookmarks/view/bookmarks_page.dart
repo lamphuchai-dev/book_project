@@ -17,10 +17,10 @@ class BookmarksPage extends StatefulWidget {
 }
 
 class _BookmarksPageState extends State<BookmarksPage> {
-  late BookmarksCubit _bookmarksCubit;
+  // late BookmarksCubit _bookmarksCubit;
   @override
   void initState() {
-    _bookmarksCubit = context.read<BookmarksCubit>();
+    // _bookmarksCubit = context.read<BookmarksCubit>();
     super.initState();
   }
 
@@ -41,7 +41,6 @@ class _BookmarksPageState extends State<BookmarksPage> {
                   return [];
                 },
                 onTap: (book) {
-                  print(book.currentReadChapter);
                   Navigator.pushNamed(context, RoutesName.readBook,
                       arguments: ReadBookArgs(
                           book: book,

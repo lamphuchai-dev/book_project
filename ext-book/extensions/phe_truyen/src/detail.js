@@ -34,15 +34,12 @@ async function detail(bookUrl) {
     await Extension.getElementsByClassName(res, "works-chapter-item")
   ).length;
 
-  const lstGenreEl = await Extension.querySelectorAll(
-    detailBook,
-    "ul.list01 li"
-  );
+  const genresEl = await Extension.querySelectorAll(detailBook, "ul.list01 li");
 
-  let listGenre = [];
+  let genres = [];
 
-  for (var el of lstGenreEl) {
-    listGenre.push({
+  for (var el of genresEl) {
+    genres.push({
       url: await Extension.getAttributeText(el.content, "a", "href"),
       title: await Extension.querySelector(el.content, "a").text,
     });
@@ -56,7 +53,7 @@ async function detail(bookUrl) {
     author,
     description,
     totalChapters,
-    listGenre,
+    genres,
   };
 }
 runFn(() => detail("https://phetruyen.net/nhiem-vu-doi-that"));

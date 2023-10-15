@@ -29,7 +29,7 @@ class Book {
   final String? currentReadChapter;
   final DateTime? updateAt;
   @ignore
-  final List<Genre> listGenre;
+  final List<Genre> genres;
 
   const Book(
       {this.id,
@@ -44,7 +44,7 @@ class Book {
       required this.type,
       required this.bookmark,
       this.currentReadChapter,
-      this.listGenre = const [],
+      this.genres = const [],
       this.updateAt});
 
   Book copyWith(
@@ -61,7 +61,7 @@ class Book {
       bool? bookmark,
       String? currentReadChapter,
       DateTime? updateAt,
-      List<Genre>? listGenre}) {
+      List<Genre>? genres}) {
     return Book(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -73,7 +73,7 @@ class Book {
         host: host ?? this.host,
         totalChapters: totalChapters ?? this.totalChapters,
         type: type ?? this.type,
-        listGenre: listGenre ?? this.listGenre,
+        genres: genres ?? this.genres,
         bookmark: bookmark ?? this.bookmark,
         currentReadChapter: currentReadChapter ?? this.currentReadChapter,
         updateAt: updateAt ?? this.updateAt);
@@ -107,9 +107,9 @@ class Book {
           (element) => element.name == map["type"],
           orElse: () => BookType.novel,
         ),
-        listGenre: map["listGenre"] != null
+        genres: map["genres"] != null
             ? List<Genre>.from(
-                (map['listGenre']).map<Genre>(
+                (map['genres']).map<Genre>(
                   (x) => Genre.fromMap(x),
                 ),
               )
