@@ -13,10 +13,10 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  late SplashCubit _splashCubit;
+  // late SplashCubit _splashCubit;
   @override
   void initState() {
-    _splashCubit = context.read<SplashCubit>();
+    // _splashCubit = context.read<SplashCubit>();
     super.initState();
   }
 

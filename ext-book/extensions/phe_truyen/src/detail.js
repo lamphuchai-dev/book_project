@@ -1,37 +1,24 @@
 async function detail(bookUrl) {
   const res = await Extension.request(bookUrl);
 
-  const detailEl = await Extension.querySelector(res, "article.item-detail");
-  const name = await Extension.querySelector(
-    detailEl.content,
-    "h1.title-detail"
-  ).text;
+  const detailBook = await Extension.querySelector(res, "div.book_detail")
+    .outerHTML;
+
+  const name = await Extension.querySelector(detailBook, "h1").text;
+
   var cover = await Extension.getAttributeText(
-    res,
-    "div.detail-info img",
-    "data-original"
-  );
-  if (cover == null) {
-    cover = await Extension.getAttributeText(res, "div.detail-info img", "src");
-  }
-  if (cover && cover.startsWith("//")) {
-    cover = "https:" + cover;
-  }
-
-  const authorRow = await Extension.querySelectorAll(
-    detailEl.content,
-    "li.author p"
+    detailBook,
+    "div.book_avatar img",
+    "src"
   );
 
+  const authorRow = await Extension.querySelectorAll(detailBook, "li.author p");
   var author = "";
   if (authorRow.length == 2) {
     author = await Extension.querySelector(authorRow[1].content, "p").text;
   }
 
-  const statusRow = await Extension.querySelectorAll(
-    detailEl.content,
-    "li.status p"
-  );
+  const statusRow = await Extension.querySelectorAll(detailBook, "li.status p");
 
   var bookStatus = "";
   if (statusRow.length == 2) {
@@ -39,38 +26,37 @@ async function detail(bookUrl) {
   }
 
   const description = await Extension.querySelector(
-    detailEl.content,
-    "div.detail-content p"
+    detailBook,
+    "div.story-detail-info p"
   ).text;
 
   const totalChapters = (
-    await Extension.querySelectorAll(res, "div.list-chapter ul a")
+    await Extension.getElementsByClassName(res, "works-chapter-item")
   ).length;
 
-  let listGenre = [];
   const lstGenreEl = await Extension.querySelectorAll(
-    detailEl.content,
-    "li.kind.row p"
+    detailBook,
+    "ul.list01 li"
   );
 
-  if (lstGenreEl.length == 2) {
-    const lstElm = await Extension.querySelectorAll(lstGenreEl[1].content, "a");
-    for (var el of lstElm) {
-      listGenre.push({
-        url: await Extension.getAttributeText(el.content, "a", "href"),
-        title: await Extension.querySelector(el.content, "a").text,
-      });
-    }
+  let listGenre = [];
+
+  for (var el of lstGenreEl) {
+    listGenre.push({
+      url: await Extension.getAttributeText(el.content, "a", "href"),
+      title: await Extension.querySelector(el.content, "a").text,
+    });
   }
 
   return {
     name,
     cover,
     bookUrl,
-    author,
     bookStatus,
+    author,
     description,
     totalChapters,
     listGenre,
   };
 }
+runFn(() => detail("https://phetruyen.net/nhiem-vu-doi-that"));

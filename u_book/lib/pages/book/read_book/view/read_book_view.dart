@@ -29,10 +29,6 @@ class ReadBookView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ReadBookCubit(
-          // book: readBookArgs.book,
-          // chapter: readBookArgs.chapter,
-          // chapters: readBookArgs.chapters,
-          // extensionJsRuntime: getIt<ExtensionsManager>().runTimePrimary!
           jsRuntime: getIt<ExtensionsService>().jsRuntime,
           extensionManager: getIt<ExtensionsService>(),
           readBookArgs: readBookArgs,
@@ -45,7 +41,7 @@ class ReadBookView extends StatelessWidget {
 
 class ReadBookArgs {
   final Book book;
-  final int? readChapter;
+  final String? readChapter;
   final List<Chapter> chapters;
   final bool fromBookmarks;
   final bool loadChapters;

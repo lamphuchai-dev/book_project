@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/data/models/book.dart';
-import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/pages/book/read_book/cubit/read_book_cubit.dart';
 import 'package:u_book/widgets/cache_network_image.dart';
 import 'package:u_book/widgets/widgets.dart';
@@ -36,8 +35,8 @@ class _BookDrawerState extends State<BookDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = context.appTextTheme;
-    final colorScheme = context.colorScheme;
+    // final textTheme = context.appTextTheme;
+    // final colorScheme = context.colorScheme;
     return Drawer(
       width: context.width * 0.85,
       // backgroundColor: backgroundColor,

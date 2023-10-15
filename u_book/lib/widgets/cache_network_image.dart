@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:u_book/app/constants/assets.dart';
-import 'package:u_book/app/extensions/extensions.dart';
 
 class CacheNetWorkImage extends StatelessWidget {
   const CacheNetWorkImage(this.url,

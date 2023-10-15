@@ -71,18 +71,15 @@ class ReadBookCubit extends Cubit<ReadBookState> {
           jsScript: DirectoryUtils.getJsScriptByPath(
               _extensionModel!.script.chapters));
       chapters = list;
-
-      final initReadChapter = chapters
-          .firstWhereOrNull((item) => item.index == _readBookArgs.readChapter);
-      readChapter.value = initReadChapter ?? chapters.first;
-      pageController = PageController(
-          initialPage:
-              initReadChapter != null ? chapters.indexOf(initReadChapter) : 0);
+      indexPageChapter = getInitialReadChapter;
+      readChapter.value = chapters[indexPageChapter];
+      pageController = PageController(initialPage: indexPageChapter);
       emit(BaseReadBook(totalChapters: state.totalChapters));
     } else {
       chapters = _readBookArgs.chapters;
-      readChapter.value = chapters[initialPage];
-      pageController = PageController(initialPage: initialPage);
+      indexPageChapter = getInitialReadChapter;
+      readChapter.value = chapters[indexPageChapter];
+      pageController = PageController(initialPage: indexPageChapter);
       emit(BaseReadBook(totalChapters: state.totalChapters));
     }
   }
@@ -150,11 +147,15 @@ class ReadBookCubit extends Cubit<ReadBookState> {
     }
   }
 
-  int get initialPage {
-    // final index = chapters.indexOf(_intReadChapter);
-    indexPageChapter = _readBookArgs.readChapter ?? 0;
-
-    return indexPageChapter == -1 ? 0 : indexPageChapter;
+  int get getInitialReadChapter {
+    if (_readBookArgs.readChapter == null) {
+      return 0;
+    } else {
+      final chapter = chapters
+          .firstWhereOrNull((e) => e.title == _readBookArgs.readChapter);
+      if (chapter == null) return 0;
+      return chapters.indexOf(chapter);
+    }
   }
 
   void onPageChanged(int index) {
@@ -164,7 +165,7 @@ class ReadBookCubit extends Cubit<ReadBookState> {
     if (book.bookmark) {
       _databaseService.updateBook(book.copyWith(
           updateAt: DateTime.now(),
-          currentReadChapter: readChapter.value!.index));
+          currentReadChapter: readChapter.value!.title));
     }
   }
 

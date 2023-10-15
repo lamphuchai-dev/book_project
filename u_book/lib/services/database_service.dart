@@ -1,10 +1,9 @@
 import 'package:isar/isar.dart';
 import 'package:u_book/data/models/book.dart';
 import 'package:u_book/utils/directory_utils.dart';
-import 'package:u_book/utils/logger.dart';
 
 class DatabaseService {
-  final _logger = Logger("DatabaseService");
+  // final _logger = Logger("DatabaseService");
   late final Isar database;
   late String _path;
 

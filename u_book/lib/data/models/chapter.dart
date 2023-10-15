@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
-import 'chapter_content.dart';
 
 class Chapter extends Equatable {
   final String title;

@@ -4,7 +4,6 @@ import 'package:u_book/app/routes/routes_name.dart';
 import 'package:u_book/pages/book/detail_book/detail_book.dart';
 import 'package:u_book/widgets/book/books_grid_widget.dart';
 import '../cubit/genre_book_cubit.dart';
-import '../widgets/widgets.dart';
 
 class GenreBookPage extends StatefulWidget {
   const GenreBookPage({super.key});
@@ -25,7 +24,7 @@ class _GenreBookPageState extends State<GenreBookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
-          AppBar(centerTitle: true, title: Text(_genreBookCubit.genre.title!)),
+          AppBar(centerTitle: false, title: Text(_genreBookCubit.genre.title!)),
       body: BooksGridWidget(
         onFetchListBook: (page) {
           return _genreBookCubit.onGetListBook(page);

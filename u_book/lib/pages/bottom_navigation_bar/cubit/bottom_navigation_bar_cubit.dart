@@ -1,9 +1,5 @@
-import 'package:dio/dio.dart';
-import 'package:dio_client/index.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:u_book/di/components/service_locator.dart';
 part 'bottom_navigation_bar_state.dart';
 
 class BottomNavigationBarCubit extends Cubit<BottomNavigationBarState> {

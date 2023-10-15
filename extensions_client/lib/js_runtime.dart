@@ -104,6 +104,7 @@ class JsRuntime {
     runtime.onMessage('getElementsByClassName', (dynamic args) async {
       final content = args[0];
       final className = args[1];
+      // final fun = args[2];
       final doc = parse(content).getElementsByClassName(className);
       if (doc.isEmpty) return [];
       final elements = jsonEncode(doc.map((e) {

@@ -8,7 +8,6 @@ import 'package:u_book/pages/book/read_book/read_book.dart';
 import 'package:u_book/widgets/widgets.dart';
 
 import '../cubit/bookmarks_cubit.dart';
-import '../widgets/widgets.dart';
 
 class BookmarksPage extends StatefulWidget {
   const BookmarksPage({super.key});
@@ -42,11 +41,12 @@ class _BookmarksPageState extends State<BookmarksPage> {
                   return [];
                 },
                 onTap: (book) {
+                  print(book.currentReadChapter);
                   Navigator.pushNamed(context, RoutesName.readBook,
                       arguments: ReadBookArgs(
                           book: book,
                           chapters: [],
-                          readChapter: book.currentReadChapter ?? 0,
+                          readChapter: book.currentReadChapter,
                           fromBookmarks: true,
                           loadChapters: true));
                 },

@@ -26,6 +26,7 @@ class _ListChaptersWidgetState extends State<ListChaptersWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.indexSelect != null) {
         final valueJumTo = widget.indexSelect! * 56.0;
+        if (valueJumTo > _scrollController.position.maxScrollExtent) return;
         _scrollController.jumpTo(valueJumTo);
       }
     });
