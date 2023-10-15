@@ -217,6 +217,16 @@ class JsRuntime {
     });
   }
 
+  Future<List<Map<String,dynamic>>> genre(
+      {required String url, required String jsScript}) async {
+    return _runExtension(() async {
+      evaluateJsScript(jsScript);
+      final jsResult = await runtime.handlePromise(
+          await runtime.evaluateAsync('stringify(()=>genre("$url"))'));
+      return List<Map<String,dynamic>>.from(jsResult.toJson);
+    });
+  }
+
   Future<List<Book>> search(
       {required String url,
       required String keyWord,

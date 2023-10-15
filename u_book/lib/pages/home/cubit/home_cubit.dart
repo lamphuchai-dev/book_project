@@ -95,6 +95,22 @@ class HomeCubit extends Cubit<HomeState> {
     return [];
   }
 
+  Future<List<Map<String,dynamic>>> onGetListGenre() async {
+    final state = this.state;
+    if (state is! LoadedExtensionState) return [];
+
+    try {
+      final jsScript =
+          DirectoryUtils.getJsScriptByPath(state.extension.script.genre!);
+      final result = await _jsRuntime.genre(
+          url: state.extension.source, jsScript: jsScript);
+      return result;
+    } catch (error) {
+      _logger.error(error, name: "onGetListGenre");
+    }
+    return [];
+  }
+
   Future<List<Book>> onSearchBook(String keyWord, int page) async {
     try {
       final state = this.state;

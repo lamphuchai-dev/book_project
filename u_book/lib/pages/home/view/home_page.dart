@@ -6,6 +6,7 @@ import 'package:u_book/app/constants/gaps.dart';
 import 'package:u_book/app/routes/routes_name.dart';
 import 'package:u_book/data/models/extension.dart';
 import 'package:u_book/pages/book/detail_book/detail_book.dart';
+import 'package:u_book/pages/home/widgets/genre_widget.dart';
 import 'package:u_book/pages/home/widgets/widgets.dart';
 import 'package:u_book/widgets/widgets.dart';
 
@@ -112,14 +113,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _extReady(Extension extension) {
-    final tabItems = extension.metadata.tabsHome
+    List<Tab> tabItems = extension.metadata.tabsHome
         .map(
           (e) => Tab(
             text: e.title,
           ),
         )
         .toList();
-    final tabChildren = extension.metadata.tabsHome
+    List<Widget> tabChildren = extension.metadata.tabsHome
         .map(
           (tabHome) => KeepAliveWidget(
             child: BooksGridWidget(
@@ -135,8 +136,17 @@ class _HomePageState extends State<HomePage> {
           ),
         )
         .toList();
+    if (extension.script.genre != null) {
+      tabItems.add(const Tab(
+        text: "Thể loại",
+      ));
+      tabChildren.add(KeepAliveWidget(
+          child: GenreWidget(
+        onFetch: _homeCubit.onGetListGenre,
+      )));
+    }
     return DefaultTabController(
-      length: extension.metadata.tabsHome.length,
+      length: tabItems.length,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

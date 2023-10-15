@@ -1,5 +1,5 @@
 async function genre(url) {
-  const res = await Extension.request(url);
+  const res = await Extension.request(url + "/tim-truyen");
   const listEl = await Extension.querySelectorAll(
     res,
     'select[class="form-control changed-redirect"] option'
