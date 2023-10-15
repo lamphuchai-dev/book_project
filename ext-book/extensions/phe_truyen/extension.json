@@ -10,7 +10,6 @@
     "locale": "vi_VN",
     "language": "javascript",
     "type": "comic",
-    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/extensions/phe_truyen/extension.zip",
     "tabsHome": [
       { "title": "Truyện mới cập nhật", "url": "/" },
       { "title": "Truyện mới", "url": "/new-stories" },

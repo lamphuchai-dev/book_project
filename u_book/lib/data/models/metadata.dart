@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:u_book/app/config/app_type.dart';
 
-
 class Metadata {
   String name;
   String author;
@@ -101,7 +100,7 @@ class Metadata {
         (type) => type.name == map["type"],
         orElse: () => ExtensionType.novel,
       ),
-      path: map['path'] as String,
+      path: map['path'] ?? "",
       localPath: map['localPath'] ?? "",
       tabsHome: map['tabsHome'] != null
           ? List<TabsHome>.from(
