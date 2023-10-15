@@ -22,8 +22,9 @@ try {
   const directories = fs
     .readdirSync(extensionsPath, { withFileTypes: true })
     .filter((item) => item.isDirectory());
-  const zip = new AdmZip();
+
   directories.forEach((extFolder) => {
+    const zip = new AdmZip();
     const extPath = extFolder.path + "/" + extFolder.name + "/";
     console.log(extPath);
     const zipPath = extPath + "/extension.zip";
