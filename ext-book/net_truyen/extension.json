@@ -52,6 +52,7 @@
     "detail": "src/detail.js",
     "chapters": "src/chapters.js",
     "chapter": "src/chapter.js",
-    "search": "src/search.js"
+    "search": "src/search.js",
+    "genre":"src/genre.js"
   }
 }
