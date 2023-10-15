@@ -1,12 +1,9 @@
-// https://timtruyen3shot.com/danh-sach-truyen.html?sort=last_update&sort_type=DESC
-
 async function home(url, page) {
   const res = await Extension.request(url, {
-    queryParameters: { page: page ?? 0 },
+    queryParameters: { page: page ?? 1 },
   });
-  const list = await Extension.getElementsByClassName(res, "item item-spc");
+  const list = await Extension.querySelectorAll(res, "div.items div.item");
   const result = [];
-  return list;
 
   for (const item of list) {
     const html = item.content;
@@ -27,9 +24,3 @@ async function home(url, page) {
   }
   return result;
 }
-
-runFn(() =>
-  home(
-    "https://timtruyen3shot.com/danh-sach-truyen.html?sort=last_update&sort_type=DESC"
-  )
-);

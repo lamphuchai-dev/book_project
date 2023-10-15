@@ -8,6 +8,7 @@ import 'package:dio_client/index.dart';
 import 'package:flutter_js/flutter_js.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:u_book/data/models/genre.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 
 import 'package:u_book/app/config/app_type.dart';
@@ -217,13 +218,13 @@ class JsRuntime {
     });
   }
 
-  Future<List<Map<String,dynamic>>> genre(
+  Future<List<Genre>> genre(
       {required String url, required String jsScript}) async {
     return _runExtension(() async {
       evaluateJsScript(jsScript);
       final jsResult = await runtime.handlePromise(
           await runtime.evaluateAsync('stringify(()=>genre("$url"))'));
-      return List<Map<String,dynamic>>.from(jsResult.toJson);
+      return jsResult.toJson.map<Genre>((map) => Genre.fromMap(map)).toList();
     });
   }
 

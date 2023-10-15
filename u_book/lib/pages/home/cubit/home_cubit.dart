@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/data/models/book.dart';
 import 'package:u_book/data/models/extension.dart';
+import 'package:u_book/data/models/genre.dart';
 import 'package:u_book/services/extensions_service.dart';
 import 'package:u_book/services/js_runtime.dart';
 import 'package:u_book/services/storage_service.dart';
@@ -95,7 +96,7 @@ class HomeCubit extends Cubit<HomeState> {
     return [];
   }
 
-  Future<List<Map<String,dynamic>>> onGetListGenre() async {
+  Future<List<Genre>> onGetListGenre() async {
     final state = this.state;
     if (state is! LoadedExtensionState) return [];
 

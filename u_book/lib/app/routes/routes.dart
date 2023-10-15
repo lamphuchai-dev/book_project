@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:u_book/app/routes/routes_name.dart';
 import 'package:u_book/data/models/book.dart';
+import 'package:u_book/pages/book/genre_book/genre_book.dart';
 import 'package:u_book/pages/bottom_navigation_bar/bottom_navigation_bar.dart';
 import 'package:u_book/pages/book/detail_book/detail_book.dart';
 import 'package:u_book/pages/book/chapters/chapters.dart';
@@ -53,14 +54,19 @@ class Routes {
 
       case RoutesName.readBook:
         assert(args != null && args is ReadBookArgs, "args must be Book");
-
         return PageTransition(
             settings: settings,
             child: ReadBookView(
-              // book: args["book"]!,
-              // chapter: args["chapter"],
-              // chapters: args["chapters"],
               readBookArgs: args as ReadBookArgs,
+            ),
+            type: PageTransitionType.rightToLeft);
+
+      case RoutesName.genreBook:
+        assert(args != null && args is GenreBookArg, "args must be Book");
+        return PageTransition(
+            settings: settings,
+            child: GenreBookView(
+              arg: args as GenreBookArg,
             ),
             type: PageTransitionType.rightToLeft);
 

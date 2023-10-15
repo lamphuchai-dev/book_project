@@ -143,6 +143,7 @@ class _HomePageState extends State<HomePage> {
       tabChildren.add(KeepAliveWidget(
           child: GenreWidget(
         onFetch: _homeCubit.onGetListGenre,
+        extension: extension,
       )));
     }
     return DefaultTabController(

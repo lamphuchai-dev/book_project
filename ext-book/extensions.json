@@ -10,7 +10,7 @@
     "locale": "vi_VN",
     "language": "javascript",
     "type": "comic",
-    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/say_truyen/extension.zip"
+    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/extensions/say_truyen/extension.zip"
   },
   {
     "name": "Net Truyện",
@@ -23,7 +23,7 @@
     "locale": "vi_VN",
     "language": "javascript",
     "type": "comic",
-    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/net_truyen/extension.zip"
+    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/extensions/net_truyen/extension.zip"
   },
   {
     "name": "Phê truyện",
@@ -36,6 +36,6 @@
     "locale": "vi_VN",
     "language": "javascript",
     "type": "comic",
-    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/phe_truyen/extension.zip"
+    "path": "https://github.com/lamphuchai-dev/book_project/raw/main/ext-book/extensions/phe_truyen/extension.zip"
   }
 ]

@@ -70,10 +70,11 @@ class _BooksGridWidgetState extends State<BooksGridWidget> {
     });
     _page = 1;
     _listBook = await widget.onFetchListBook!.call(_page);
-    widget.onChangeBooks?.call(_listBook);
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _onLoadMore() async {
