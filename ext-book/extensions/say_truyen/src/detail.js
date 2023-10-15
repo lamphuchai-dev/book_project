@@ -18,7 +18,7 @@ async function detail(bookUrl) {
   var author = "";
   var statusBook = "";
 
-  let listGenre = [];
+  let genres = [];
 
   const genreEls = await Extension.querySelectorAll(
     detailEl.content,
@@ -26,7 +26,7 @@ async function detail(bookUrl) {
   );
 
   for (var el of genreEls) {
-    listGenre.push({
+    genres.push({
       url: await Extension.getAttributeText(el.content, "a", "href"),
       title: await Extension.querySelector(el.content, "a").text,
     });
@@ -63,7 +63,7 @@ async function detail(bookUrl) {
     statusBook,
     author,
     description,
-    listGenre,
+    genres,
     totalChapters,
   };
 }
