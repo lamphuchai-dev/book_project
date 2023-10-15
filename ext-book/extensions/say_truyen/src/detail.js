@@ -18,15 +18,15 @@ async function detail(bookUrl) {
   var author = "";
   var statusBook = "";
 
-  let genres = [];
+  let listGenre = [];
 
-  const genresEl = await Extension.querySelectorAll(
+  const genreEls = await Extension.querySelectorAll(
     detailEl.content,
     "div.genres-content a"
   );
 
-  for (var el of genresEl) {
-    genres.push({
+  for (var el of genreEls) {
+    listGenre.push({
       url: await Extension.getAttributeText(el.content, "a", "href"),
       title: await Extension.querySelector(el.content, "a").text,
     });
@@ -52,6 +52,10 @@ async function detail(bookUrl) {
     "div.description-summary p"
   ).text;
 
+  const totalChapters = (
+    await Extension.querySelectorAll(res, "div.list-chapter ul a")
+  ).length;
+
   return {
     name,
     cover,
@@ -59,6 +63,7 @@ async function detail(bookUrl) {
     statusBook,
     author,
     description,
-    genres,
+    listGenre,
+    totalChapters,
   };
 }

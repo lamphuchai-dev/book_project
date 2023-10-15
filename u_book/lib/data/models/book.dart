@@ -89,7 +89,8 @@ class Book {
       'cover': cover,
       'host': host,
       'totalChapters': totalChapters,
-      'type': type.name
+      'type': type.name,
+      "genres": genres.map((e) => e.toMap())
     };
   }
 
