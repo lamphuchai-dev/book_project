@@ -30,6 +30,24 @@ async function detail(bookUrl) {
     "div.story-detail-info p"
   ).text;
 
+  const totalChapters = (
+    await Extension.getElementsByClassName(res, "works-chapter-item")
+  ).length;
+
+  const lstGenreEl = await Extension.querySelectorAll(
+    detailBook,
+    "ul.list01 li"
+  );
+
+  let listGenre = [];
+
+  for (var el of lstGenreEl) {
+    listGenre.push({
+      url: await Extension.getAttributeText(el.content, "a", "href"),
+      title: await Extension.querySelector(el.content, "a").text,
+    });
+  }
+
   return {
     name,
     cover,
@@ -37,5 +55,7 @@ async function detail(bookUrl) {
     bookStatus,
     author,
     description,
+    totalChapters,
+    listGenre,
   };
 }

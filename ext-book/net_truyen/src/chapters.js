@@ -16,3 +16,9 @@ async function chapters(bookUrl) {
   }
   return chapters;
 }
+
+
+
+[].forEach((el)=>{
+  
+})

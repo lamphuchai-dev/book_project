@@ -21,6 +21,22 @@
         "url": "/tim-truyen?status=-1&sort=15"
       },
       {
+        "title": "Truyện Full",
+        "url": "/truyen-full"
+      },
+      {
+        "title": "Tất cả - Số chapter",
+        "url": "/tim-truyen?status=-1&sort=30"
+      },
+      {
+        "title": "Truyện con trai",
+        "url": "/truyen-con-trai"
+      },
+      {
+        "title": "Truyện con gái",
+        "url": "/truyen-con-gai"
+      },
+      {
         "title": "Top all",
         "url": "/tim-truyen?status=-1&sort=10"
       },
