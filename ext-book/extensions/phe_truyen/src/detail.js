@@ -56,4 +56,3 @@ async function detail(bookUrl) {
     genres,
   };
 }
-runFn(() => detail("https://phetruyen.net/nhiem-vu-doi-that"));

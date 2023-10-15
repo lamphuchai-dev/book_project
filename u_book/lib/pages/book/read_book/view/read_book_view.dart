@@ -7,22 +7,13 @@ import 'package:u_book/data/models/chapter.dart';
 import 'package:u_book/di/components/service_locator.dart';
 import 'package:u_book/services/extensions_service.dart';
 import 'package:u_book/services/database_service.dart';
-import 'package:u_book/services/extensions_service.dart';
 
 import '../cubit/read_book_cubit.dart';
 import 'read_book_page.dart';
 
 class ReadBookView extends StatelessWidget {
-  const ReadBookView(
-      {super.key,
-      // required this.book,
-      // required this.chapter,
-      // required this.chapters
-      required this.readBookArgs});
+  const ReadBookView({super.key, required this.readBookArgs});
   static const String routeName = '/read_book_view';
-  // final Book book;
-  // final Chapter chapter;
-  // final List<Chapter> chapters;
   final ReadBookArgs readBookArgs;
 
   @override
@@ -41,13 +32,13 @@ class ReadBookView extends StatelessWidget {
 
 class ReadBookArgs {
   final Book book;
-  final String? readChapter;
+  final int readChapter;
   final List<Chapter> chapters;
   final bool fromBookmarks;
   final bool loadChapters;
   ReadBookArgs(
       {required this.book,
-      this.readChapter,
+      this.readChapter = 0,
       required this.chapters,
       required this.fromBookmarks,
       required this.loadChapters});

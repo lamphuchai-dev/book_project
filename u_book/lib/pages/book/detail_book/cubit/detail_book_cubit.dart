@@ -16,7 +16,7 @@ class DetailBookCubit extends Cubit<DetailBookState> {
       {required Book book,
       required ExtensionsService extensionManager,
       required DatabaseService databaseService,
-      required this.extensionModel})
+      required this.extension})
       : _databaseService = databaseService,
         _jsRuntime = extensionManager.jsRuntime,
         super(DetailBookState(
@@ -25,7 +25,7 @@ class DetailBookCubit extends Cubit<DetailBookState> {
   final _logger = Logger("DetailBookCubit");
 
   final DatabaseService _databaseService;
-  final Extension extensionModel;
+  final Extension extension;
   final JsRuntime _jsRuntime;
   int? _idBook;
   void onInit() async {
@@ -38,8 +38,8 @@ class DetailBookCubit extends Cubit<DetailBookState> {
       final result = await _jsRuntime.detail(
           url: state.book.bookUrl,
           jsScript:
-              DirectoryUtils.getJsScriptByPath(extensionModel.script.detail),
-          extType: extensionModel.metadata.type);
+              DirectoryUtils.getJsScriptByPath(extension.script.detail),
+          extType: extension.metadata.type);
       emit(state.copyWith(book: result, statusType: StatusType.loaded));
     } catch (error) {
       _logger.error(error, name: "onInit");

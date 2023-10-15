@@ -22,7 +22,6 @@ class CacheNetWorkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(url);
     return CachedNetworkImage(
       imageUrl: url,
       fit: fit,

@@ -9,7 +9,7 @@ import 'package:u_book/data/models/genre.dart';
 part 'book.g.dart';
 
 enum BookType { novel, comic }
-
+// flutter clean && flutter pub get && flutter pub run build_runner build
 @Collection()
 class Book {
   final Id? id;
@@ -26,7 +26,7 @@ class Book {
   @Enumerated(EnumType.ordinal)
   final BookType type;
   final bool bookmark;
-  final String? currentReadChapter;
+  final int? currentReadChapter;
   final DateTime? updateAt;
   @ignore
   final List<Genre> genres;
@@ -59,7 +59,7 @@ class Book {
       int? totalChapters,
       BookType? type,
       bool? bookmark,
-      String? currentReadChapter,
+      int? currentReadChapter,
       DateTime? updateAt,
       List<Genre>? genres}) {
     return Book(

@@ -8,3 +8,4 @@ export 'book/books_grid_widget.dart';
 export 'keep_alive_widget.dart';
 export 'book/list_chapter_widget.dart';
 export './blurred_backdrop_image.dart';
+export './genre_card_widget.dart';

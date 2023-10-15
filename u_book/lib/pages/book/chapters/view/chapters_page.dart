@@ -85,7 +85,7 @@ class _ChaptersPageState extends State<ChaptersPage> {
                         arguments: ReadBookArgs(
                             book: _book,
                             chapters: chapters,
-                            readChapter: chapter.title,
+                            readChapter: chapter.index,
                             fromBookmarks: false,
                             loadChapters: false));
                   },

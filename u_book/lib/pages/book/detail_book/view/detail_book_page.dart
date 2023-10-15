@@ -100,32 +100,54 @@ class _DetailBookPageState extends State<DetailBookPage> {
                     Positioned.fill(
                       top: kToolbarHeight,
                       bottom: paddingAppBar,
+                      right: 0,
+                      left: 0,
                       child: SafeArea(
                         child: Row(
                           children: [
                             Gaps.wGap16,
-                            Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8)),
-                              clipBehavior: Clip.hardEdge,
-                              child: CacheNetWorkImage(coverUrl),
+                            Flexible(
+                              flex: 2,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8)),
+                                clipBehavior: Clip.hardEdge,
+                                child: CacheNetWorkImage(
+                                  coverUrl,
+                                ),
+                              ),
                             ),
                             Gaps.wGap12,
                             Expanded(
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    child: Text(
-                                      book.name,
-                                      style: textTheme.titleLarge,
-                                    ),
-                                  ),
-                                  Text(book.author),
-                                ])),
+                                flex: 3,
+                                child: BlocBuilder<DetailBookCubit,
+                                    DetailBookState>(
+                                  builder: (context, state) {
+                                    final book = state.book;
+                                    return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
+                                            child: Text(
+                                              book.name,
+                                              style: textTheme.titleLarge,
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                          Text(
+                                            book.author,
+                                            maxLines: 2,
+                                          ),
+                                          Text(book.bookStatus),
+                                          Text(book.totalChapters == 0
+                                              ? ""
+                                              : book.totalChapters.toString()),
+                                        ]);
+                                  },
+                                )),
                             Gaps.wGap16,
                           ],
                         ),
@@ -151,6 +173,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                     case StatusType.loaded:
                       return BookDetail(
                         book: book,
+                        extension: _detailBookCubit.extension,
                       );
                     default:
                       return const SizedBox();
@@ -214,7 +237,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                             arguments: ChaptersBookArgs(
                                 book: _detailBookCubit.state.book,
                                 extensionModel:
-                                    _detailBookCubit.extensionModel));
+                                    _detailBookCubit.extension));
                       },
                       child: Container(
                         decoration: BoxDecoration(

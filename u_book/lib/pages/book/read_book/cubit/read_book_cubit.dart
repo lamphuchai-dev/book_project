@@ -71,13 +71,13 @@ class ReadBookCubit extends Cubit<ReadBookState> {
           jsScript: DirectoryUtils.getJsScriptByPath(
               _extensionModel!.script.chapters));
       chapters = list;
-      indexPageChapter = getInitialReadChapter;
+      indexPageChapter = _readBookArgs.readChapter;
       readChapter.value = chapters[indexPageChapter];
       pageController = PageController(initialPage: indexPageChapter);
       emit(BaseReadBook(totalChapters: state.totalChapters));
     } else {
       chapters = _readBookArgs.chapters;
-      indexPageChapter = getInitialReadChapter;
+      indexPageChapter = _readBookArgs.readChapter;
       readChapter.value = chapters[indexPageChapter];
       pageController = PageController(initialPage: indexPageChapter);
       emit(BaseReadBook(totalChapters: state.totalChapters));
@@ -147,16 +147,16 @@ class ReadBookCubit extends Cubit<ReadBookState> {
     }
   }
 
-  int get getInitialReadChapter {
-    if (_readBookArgs.readChapter == null) {
-      return 0;
-    } else {
-      final chapter = chapters
-          .firstWhereOrNull((e) => e.title == _readBookArgs.readChapter);
-      if (chapter == null) return 0;
-      return chapters.indexOf(chapter);
-    }
-  }
+  // int get getInitialReadChapter {
+  //   if (_readBookArgs.readChapter == null) {
+  //     return 0;
+  //   } else {
+  //     final chapter = chapters
+  //         .firstWhereOrNull((e) => e.title == _readBookArgs.readChapter);
+  //     if (chapter == null) return 0;
+  //     return chapters.indexOf(chapter);
+  //   }
+  // }
 
   void onPageChanged(int index) {
     indexPageChapter = index;
@@ -165,7 +165,7 @@ class ReadBookCubit extends Cubit<ReadBookState> {
     if (book.bookmark) {
       _databaseService.updateBook(book.copyWith(
           updateAt: DateTime.now(),
-          currentReadChapter: readChapter.value!.title));
+          currentReadChapter: readChapter.value!.index));
     }
   }
 

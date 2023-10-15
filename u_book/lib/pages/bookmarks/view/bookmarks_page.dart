@@ -45,7 +45,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
                       arguments: ReadBookArgs(
                           book: book,
                           chapters: [],
-                          readChapter: book.currentReadChapter,
+                          readChapter: book.currentReadChapter ?? 0,
                           fromBookmarks: true,
                           loadChapters: true));
                 },

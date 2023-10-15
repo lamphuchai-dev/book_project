@@ -23,7 +23,7 @@ class DetailBookView extends StatelessWidget {
     return BlocProvider(
       create: (context) => DetailBookCubit(
           book: args.book,
-          extensionModel: args.extensionModel,
+          extension: args.extensionModel,
           extensionManager: getIt<ExtensionsService>(),
           databaseService: getIt<DatabaseService>())
         ..onInit(),
