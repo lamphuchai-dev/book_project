@@ -22,7 +22,20 @@ async function detail(bookUrl) {
     detailEl.content,
     "li.author p"
   );
-  const author = await Extension.querySelector(authorRow[1].content, "p").text;
+  var author = "";
+  if (authorRow.length == 2) {
+    author = await Extension.querySelector(authorRow[1].content, "p").text;
+  }
+
+  const statusRow = await Extension.querySelectorAll(
+    detailEl.content,
+    "li.status p"
+  );
+
+  var bookStatus = "";
+  if (statusRow.length == 2) {
+    bookStatus = await Extension.querySelector(statusRow[1].content, "p").text;
+  }
 
   const description = await Extension.querySelector(
     detailEl.content,
@@ -52,6 +65,7 @@ async function detail(bookUrl) {
   return {
     name,
     cover,
+    bookStatus,
     bookUrl,
     author,
     description,

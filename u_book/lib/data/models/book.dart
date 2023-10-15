@@ -109,7 +109,7 @@ class Book {
         ),
         listGenre: map["listGenre"] != null
             ? List<Genre>.from(
-                (map['tabsHome']).map<Genre>(
+                (map['listGenre']).map<Genre>(
                   (x) => Genre.fromMap(x),
                 ),
               )
