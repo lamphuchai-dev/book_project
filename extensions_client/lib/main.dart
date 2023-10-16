@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 
@@ -5,16 +7,17 @@ import 'home/view/home_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DesktopWindow.setWindowSize(const Size(1000, 1000));
+  if (Platform.isMacOS) {
+    await DesktopWindow.setWindowSize(const Size(1000, 1000));
+    await DesktopWindow.setMinWindowSize(const Size(1000, 800));
+  }
 
-  await DesktopWindow.setMinWindowSize(const Size(1000, 800));
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,14 +30,4 @@ class MyApp extends StatelessWidget {
       home: const HomeView(),
     );
   }
-
-  //  @override
-  // Widget build(BuildContext context) {
-  //   return MacosApp(
-  //     theme: MacosThemeData.light(),
-  //     darkTheme: MacosThemeData.dark(),
-  //     themeMode: ThemeMode.system,
-  //     home: HomeView(),
-  //   );
-  // }
 }

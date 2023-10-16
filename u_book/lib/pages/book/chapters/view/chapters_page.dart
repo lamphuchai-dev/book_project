@@ -33,7 +33,13 @@ class _ChaptersPageState extends State<ChaptersPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_book.name),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                // _chaptersCubit.sortChapterType();
+              },
+              icon: const Icon(Icons.search))
+        ],
       ),
       body: Padding(
         padding:
@@ -56,19 +62,37 @@ class _ChaptersPageState extends State<ChaptersPage> {
                     "${chapters.length} chương",
                     style: textTheme.bodyMedium,
                   ),
-                  trailing: PopupMenuButton(
+                  trailing: PopupMenuButton<SortChapterType>(
                     position: PopupMenuPosition.under,
+                    // initialValue: state.sortType,
                     itemBuilder: (context) {
                       return [
-                        const PopupMenuItem(child: Text("Mới nhất")),
-                        const PopupMenuItem(child: Text("Củ nhất"))
+                        PopupMenuItem(
+                          value: SortChapterType.newChapter,
+                          child: const Text("Mới nhất"),
+                          onTap: () {
+                            _chaptersCubit
+                                .sortChapterType(SortChapterType.newChapter);
+                          },
+                        ),
+                        PopupMenuItem(
+                          value: SortChapterType.lastChapter,
+                          child: const Text("Củ nhất"),
+                          onTap: () {
+                            _chaptersCubit
+                                .sortChapterType(SortChapterType.lastChapter);
+                          },
+                        )
                       ];
                     },
-                    child: const SizedBox(
+                    child: SizedBox(
                       height: 56,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [Text("Mới nhất"), Icon(Icons.expand_more)],
+                        children: [
+                          Text(state.sortType.name),
+                          const Icon(Icons.expand_more)
+                        ],
                       ),
                     ),
                   ),
@@ -81,10 +105,12 @@ class _ChaptersPageState extends State<ChaptersPage> {
                     child: ListChaptersWidget(
                   chapters: chapters,
                   onTapChapter: (chapter) {
+                    final chaptersSor = _chaptersCubit.sort(
+                        chapters, SortChapterType.lastChapter);
                     Navigator.pushNamed(context, RoutesName.readBook,
                         arguments: ReadBookArgs(
                             book: _book,
-                            chapters: chapters,
+                            chapters: chaptersSor,
                             readChapter: chapter.index,
                             fromBookmarks: false,
                             loadChapters: false));

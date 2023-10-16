@@ -26,7 +26,7 @@ class _ListChaptersWidgetState extends State<ListChaptersWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.indexSelect != null) {
         final valueJumTo = widget.indexSelect! * 56.0;
-        if (valueJumTo > _scrollController.position.maxScrollExtent) return;
+        // if (valueJumTo > _scrollController.position.) return;
         _scrollController.jumpTo(valueJumTo);
       }
     });
@@ -49,7 +49,7 @@ class _ListChaptersWidgetState extends State<ListChaptersWidget> {
       itemBuilder: (context, index) {
         final chapter = widget.chapters[index];
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+          // contentPadding: const EdgeInsets.symmetric(horizontal: 8),
           tileColor: widget.indexSelect == index ? colorScheme.surface : null,
           title: Text(
             chapter.title,

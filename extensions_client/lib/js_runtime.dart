@@ -44,7 +44,7 @@ class JsRuntime {
     });
 
     runtime.onMessage('log', (dynamic args) {
-      // _logger.log(args, name: "LOG");
+      _logger.log(args, name: "LOG");
       _streamController.add(List<String>.from(args));
     });
 

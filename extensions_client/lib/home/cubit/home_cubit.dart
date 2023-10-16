@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:another_flushbar/flushbar.dart';
-import 'package:dio_client/index.dart';
 import 'package:equatable/equatable.dart';
 import 'package:extensions_client/js_runtime.dart';
 import 'package:extensions_client/logger.dart';
@@ -11,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(const HomeState(result: "", log: ""));
+  HomeCubit() : super(const HomeState(result: "", log: []));
   final _logger = Logger("HomeCubit");
 
   final _jsRuntime = JsRuntime();
@@ -24,14 +23,19 @@ class HomeCubit extends Cubit<HomeState> {
     final init = await _jsRuntime.initRuntime();
     _logger.log("jsRuntime init : $init ");
     _jsRuntime.log.listen((event) {
-      emit(state.copyWith(log: event));
+      if (event is List) {
+        final log = event.first;
+        emit(state.copyWith(log: [
+          ...state.log,
+          LogModel(dateTime: DateTime.now(), log: log.toString())
+        ]));
+      }
     });
   }
 
   void onGo(BuildContext context) async {
     try {
-      emit(state.copyWith(result: "", log: ""));
-
+      emit(state.copyWith(result: ""));
       final result = await _jsRuntime.runJsCode(
           jsScript: jsCodeTextEditingController.text);
 
@@ -53,5 +57,9 @@ class HomeCubit extends Cubit<HomeState> {
         duration: const Duration(seconds: 3),
       ).show(context);
     }
+  }
+
+  void clearLog() {
+    emit(state.copyWith(log: []));
   }
 }

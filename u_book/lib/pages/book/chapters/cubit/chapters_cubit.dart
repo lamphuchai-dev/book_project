@@ -16,7 +16,10 @@ class ChaptersCubit extends Cubit<ChaptersState> {
       required this.extensionModel,
       required JsRuntime jsRuntime})
       : _jsRuntime = jsRuntime,
-        super(const ChaptersState(chapters: [], statusType: StatusType.init));
+        super(const ChaptersState(
+            chapters: [],
+            statusType: StatusType.init,
+            sortType: SortChapterType.newChapter));
   final _logger = Logger("ChaptersCubit");
   final Book book;
   final JsRuntime _jsRuntime;
@@ -26,14 +29,33 @@ class ChaptersCubit extends Cubit<ChaptersState> {
   void onInit() async {
     emit(state.copyWith(statusType: StatusType.loading));
     try {
-      final chapters = await _jsRuntime.getChapters(
+      List<Chapter> chapters = await _jsRuntime.getChapters(
           url: book.bookUrl,
           jsScript:
               DirectoryUtils.getJsScriptByPath(extensionModel.script.chapters));
-      emit(state.copyWith(statusType: StatusType.loaded, chapters: chapters));
+      chapters = sort(chapters, SortChapterType.newChapter);
+      emit(state.copyWith(
+          chapters: chapters,
+          sortType: SortChapterType.newChapter,
+          statusType: StatusType.loaded));
     } catch (error) {
       emit(state.copyWith(statusType: StatusType.error));
       _logger.error(error, name: "onInit");
     }
+  }
+
+  void sortChapterType(SortChapterType type) {
+    final chapters = sort(state.chapters, type);
+    emit(state.copyWith(chapters: chapters, sortType: type));
+  }
+
+  List<Chapter> sort(List<Chapter> list, SortChapterType type) {
+    if (type == SortChapterType.newChapter) {
+      list.sort((a, b) => b.index.compareTo(a.index));
+    } else {
+      list.sort((a, b) => a.index.compareTo(b.index));
+    }
+    print(type);
+    return list;
   }
 }

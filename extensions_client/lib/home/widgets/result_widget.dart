@@ -6,8 +6,20 @@ import 'package:json_view/json_view.dart';
 
 import '../cubit/home_cubit.dart';
 
-class ResultWidget extends StatelessWidget {
+class ResultWidget extends StatefulWidget {
   const ResultWidget({super.key});
+
+  @override
+  State<ResultWidget> createState() => _ResultWidgetState();
+}
+
+class _ResultWidgetState extends State<ResultWidget> {
+  late ScrollController _scrollController;
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

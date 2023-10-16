@@ -3,8 +3,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:u_book/app/extensions/extensions.dart';
 import 'package:u_book/pages/book/read_book/cubit/read_book_cubit.dart';
 
-class BottomBaseMenuWidget extends StatelessWidget {
+class BottomBaseMenuWidget extends StatefulWidget {
   const BottomBaseMenuWidget({super.key});
+
+  @override
+  State<BottomBaseMenuWidget> createState() => _BottomBaseMenuWidgetState();
+}
+
+class _BottomBaseMenuWidgetState extends State<BottomBaseMenuWidget> {
+  late ReadBookCubit _readBookCubit;
+  @override
+  void initState() {
+    _readBookCubit = context.read<ReadBookCubit>();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +38,15 @@ class BottomBaseMenuWidget extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: Text(
-                context.read<ReadBookCubit>().currentChapter.title,
-                textAlign: TextAlign.center,
+                  child: ValueListenableBuilder(
+                valueListenable: _readBookCubit.readChapter,
+                builder: (context, value, child) {
+                  if (value == null) const SizedBox();
+                  return Text(
+                    value!.title,
+                    textAlign: TextAlign.center,
+                  );
+                },
               )),
             ],
           ),
@@ -42,25 +60,24 @@ class BottomBaseMenuWidget extends StatelessWidget {
               ),
               IconButton(
                   onPressed: () {
-                    // context.read<ReadBookCubit>().onPreviousPage();
+                    context.read<ReadBookCubit>().onPreviousPage();
                   },
                   icon: const Icon(Icons.skip_previous)),
-              // Expanded(
-              //     child: ValueListenableBuilder(
-              //   valueListenable: context.read<ReadBookCubit>().chaptersSlider,
-              //   builder: (context, value, child) => Slider(
-              //     min: 0,
-              //     value: value.toDouble(),
-              //     max:
-              //         context.read<ReadBookCubit>().getTotalChapters.toDouble(),
-              //     onChanged: (value) => context
-              //         .read<ReadBookCubit>()
-              //         .onChangeChaptersSlider(value.toInt()),
-              //   ),
-              // )),
+              Expanded(
+                  child: ValueListenableBuilder(
+                valueListenable: _readBookCubit.readChapter,
+                builder: (context, value, child) => Slider(
+                  min: 0,
+                  value: value?.index == null ? 0 : value!.index.toDouble(),
+                  max: (_readBookCubit.chapters.length - 1).toDouble(),
+                  onChanged: (value) => context
+                      .read<ReadBookCubit>()
+                      .onChangeChaptersSlider(value.toInt()),
+                ),
+              )),
               IconButton(
                   onPressed: () {
-                    // context.read<ReadBookCubit>().onNextPage();
+                    context.read<ReadBookCubit>().onNextPage();
                   },
                   icon: const Icon(Icons.skip_next)),
               const SizedBox(

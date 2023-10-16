@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,8 +41,10 @@ class ReadBookCubit extends Cubit<ReadBookState> {
   final ExtensionsService _extensionManager;
   final DatabaseService _databaseService;
 
-  Extension? _extensionModel;
+  Extension? _extension;
   bool _currentOnTouchScreen = false;
+
+  Extension get extension => _extension!;
 
   late final AnimationController _menuAnimationController;
   PageController? pageController;
@@ -53,6 +57,8 @@ class ReadBookCubit extends Cubit<ReadBookState> {
   ValueNotifier<ContentPagination?> contentPaginationValue =
       ValueNotifier(null);
 
+  Timer? chaptersSliderTime;
+
   void onInit() async {
     final ext =
         _extensionManager.getExtensionBySource(book.getSourceByBookUrl());
@@ -63,13 +69,13 @@ class ReadBookCubit extends Cubit<ReadBookState> {
       return;
     }
 
-    _extensionModel = ext;
+    _extension = ext;
 
     if (_readBookArgs.fromBookmarks) {
       final list = await _jsRuntime.getChapters(
           url: book.bookUrl,
-          jsScript: DirectoryUtils.getJsScriptByPath(
-              _extensionModel!.script.chapters));
+          jsScript:
+              DirectoryUtils.getJsScriptByPath(_extension!.script.chapters));
       chapters = list;
       indexPageChapter = _readBookArgs.readChapter;
       readChapter.value = chapters[indexPageChapter];
@@ -95,8 +101,8 @@ class ReadBookCubit extends Cubit<ReadBookState> {
       if (content != null) return content;
       List<String> result = await _jsRuntime.chapter(
           url: chapter.url,
-          jsScript: DirectoryUtils.getJsScriptByPath(
-              _extensionModel!.script.chapter));
+          jsScript:
+              DirectoryUtils.getJsScriptByPath(_extension!.script.chapter));
       chapter = chapter.copyWith(content: result);
       chapters = chapters
           .map((element) => element.index == chapter.index ? chapter : element)
@@ -225,6 +231,28 @@ class ReadBookCubit extends Cubit<ReadBookState> {
         onCloseAutoScroll();
       }
     }
+  }
+
+  void onNextPage() {
+    if (indexPageChapter == chapters.length - 1) return;
+    pageController?.nextPage(
+        duration: const Duration(milliseconds: 100), curve: Curves.linear);
+  }
+
+  void onPreviousPage() {
+    if (indexPageChapter == 0) return;
+    pageController?.previousPage(
+        duration: const Duration(milliseconds: 100), curve: Curves.linear);
+  }
+
+  void onChangeChaptersSlider(int value) {
+    if (chaptersSliderTime != null) {
+      chaptersSliderTime?.cancel();
+    }
+    readChapter.value = chapters[value];
+    chaptersSliderTime = Timer(const Duration(milliseconds: 500), () {
+      pageController?.jumpToPage(value);
+    });
   }
 
   ScrollPhysics? getPhysicsScroll() {

@@ -35,15 +35,19 @@ class _HomePageState extends State<HomePage> {
 // await Extension. getElementsByClassName(html,"className","fun")
 
 async function execute(url, page) {
-  const res = await Extension.request(url, {
-    queryParameters: {
-      page: page ?? 0,
-    },
-  });
-  return res;
+  console.log("fe")
+  // const res = await Extension.request(url, {
+  //   queryParameters: {
+  //     page: page ?? 0,
+  //   },
+  // });
+  return {};
 }
 
-runFn(() => execute("url"));
+// runFn(() => execute("url"));
+
+
+
 ''';
     _codeController = CodeController(
       text: source,
@@ -76,12 +80,6 @@ runFn(() => execute("url"));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _homeCubit.onGo(context);
-        },
-        child: const Text("RUN"),
-      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -91,6 +89,35 @@ runFn(() => execute("url"));
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      _homeCubit.onGo(context);
+                    },
+                    child: const Text("RUN")),
+                const SizedBox(
+                  width: 16,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _codeController?.clear();
+                      _codeController?.insertStr('runFn(() => execute("url"))');
+                    },
+                    child: const Text("Clear code")),
+                const SizedBox(
+                  width: 16,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _homeCubit.clearLog();
+                    },
+                    child: const Text("Clear log")),
+              ],
+            ),
+            const SizedBox(
+              height: 16,
+            ),
             Flexible(
                 flex: 2,
                 child: SingleChildScrollView(

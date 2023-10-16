@@ -7,3 +7,5 @@ enum MediaStatus { init, start, pause, complete, stop, error }
 enum AutoScrollStatus { init, start, pause, complete, stop, error }
 
 enum ExtensionType { comic, novel }
+
+enum SortChapterType { newChapter, lastChapter }

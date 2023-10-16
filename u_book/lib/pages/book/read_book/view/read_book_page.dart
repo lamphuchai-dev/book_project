@@ -37,11 +37,17 @@ class _ReadBookPageState extends State<ReadBookPage>
     colorScheme = context.colorScheme;
     return Scaffold(
       drawer: const BookDrawer(),
+      drawerEnableOpenDragGesture: false,
       body: BlocBuilder<ReadBookCubit, ReadBookState>(
         builder: (context, state) {
           if (state is ReadBookInitial) {
             if (state.extensionStatus == ExtensionStatus.error) {
-              return Text("no install extension");
+              return Scaffold(
+                appBar: AppBar(),
+                body: const Center(
+                  child: Text("Chưa cài extension"),
+                ),
+              );
             }
             return const LoadingWidget();
           }
@@ -137,7 +143,7 @@ class _ReadBookPageState extends State<ReadBookPage>
             child: Row(
               children: [
                 Text(
-                  "${value.index}/${_readBookCubit.chapters.length}",
+                  "${value.index + 1}/${_readBookCubit.chapters.length}",
                   style: const TextStyle(fontSize: 11),
                 ),
                 ValueListenableBuilder(
